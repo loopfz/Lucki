@@ -110,7 +110,7 @@ public class PlayerSpecificFrequencyTable implements IFrequencyTable, IPlayerAct
 
     @Override
     public void leave(ITable table, String id) {
-        table.unregisterPriorityListenerForPlayer(_playerId, this);
+        //table.unregisterPriorityListenerForPlayer(_playerId, this);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class PlayerSpecificFrequencyTable implements IFrequencyTable, IPlayerAct
     }
 
     @Override
-    public void newGame(ITable table, int stackSize) {
+    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
         
     }
     

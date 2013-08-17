@@ -91,7 +91,7 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
     }
 
     @Override
-    public void newGame(ITable table, int stackSize) {
+    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
         
     }
     

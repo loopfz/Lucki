@@ -37,6 +37,6 @@ public interface IGameEventListener {
     
     public void newHand(ITable table);
     
-    public void newGame(ITable table, int stackSize);
+    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers);
     
 }

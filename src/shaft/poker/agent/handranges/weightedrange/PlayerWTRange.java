@@ -137,7 +137,7 @@ public class PlayerWTRange implements IPlayerRange, IPlayerActionListener, IGame
 
     @Override
     public void leave(ITable table, String id) {
-        table.unregisterListenerForPlayer(_playerId, this);
+        //table.unregisterListenerForPlayer(_playerId, this);
         _dead = true;
         _active = false;
     }
@@ -165,8 +165,9 @@ public class PlayerWTRange implements IPlayerRange, IPlayerActionListener, IGame
     }
 
     @Override
-    public void newGame(ITable table, int stackSize) {
-        
+    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
+        _active = true;
+        _dead = false;
     }
 
 }

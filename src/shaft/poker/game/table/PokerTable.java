@@ -25,6 +25,7 @@ package shaft.poker.game.table;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import shaft.poker.game.Card;
 import shaft.poker.game.IAction;
@@ -49,8 +50,6 @@ public class PokerTable implements ITable {
     private int _amountCall;
     private int _pot;
     
-    private int _startStackSize;
-    
     private IPlayerContext _plContext;
     
     private int _sBlind;
@@ -59,10 +58,10 @@ public class PokerTable implements ITable {
     private IDeck _deck;
     private List<Card> _board;
     
-    private List<PlayerData> _players;
-    private List<PlayerData> _playersToAct;
-    private List<PlayerData> _playersActed;
-    private List<PlayerData> _deadPlayers;
+    private LinkedList<PlayerData> _players;
+    private LinkedList<PlayerData> _playersToAct;
+    private LinkedList<PlayerData> _playersActed;
+    private LinkedList<PlayerData> _deadPlayers;
     
     private List<IGameEventListener> _roundListeners;
     private List<IPlayerActionListener> _allEventsListeners;
@@ -74,10 +73,10 @@ public class PokerTable implements ITable {
         _plContext = plContext;
         
         _numberTotalPlayers = players.size();
-        _players = new ArrayList<>(_numberTotalPlayers);
-        _playersToAct = new ArrayList<>(_numberTotalPlayers);
-        _playersActed = new ArrayList<>(_numberTotalPlayers);
-        _deadPlayers = new ArrayList<>(_numberTotalPlayers);
+        _players = new LinkedList<>();
+        _playersToAct = new LinkedList<>();
+        _playersActed = new LinkedList<>();
+        _deadPlayers = new LinkedList<>();
         
         _deck = ComponentFactory.buildDeck();
         _board = new ArrayList<>(5);
@@ -97,7 +96,7 @@ public class PokerTable implements ITable {
         _numberHandsInGame = 0;
         _players.addAll(_deadPlayers);
         for (IGameEventListener listener : _roundListeners) {
-            listener.newGame(this, stackSize);
+            listener.newGame(this, stackSize, _sBlind, _bBlind, _numberTotalPlayers);
         }
         while (_players.size() > 1 && _numberHandsInGame < hands) {
             _numberHandsInGame++;
@@ -185,6 +184,9 @@ public class PokerTable implements ITable {
                                 playerCall(pl);
                             }
                             if (act.type() == ActionType.BET) {
+                                if (pl.leftToCall(_amountCall) > 0) {
+                                    playerCall(pl);
+                                }
                                 playerBet(pl, act.amount());
                                 raised = true;
                             }
@@ -280,6 +282,8 @@ public class PokerTable implements ITable {
                 }
             }
             
+            PlayerData dealer = _players.removeLast();
+            _players.addFirst(dealer);
         }
     }
     
@@ -293,6 +297,7 @@ public class PokerTable implements ITable {
         _pot += pl.placeMoney(amount);
         _numberBets++;
         _amountCall += amount;
+        _numberCallers = 0;
     }
     
     private void playerCall(PlayerData pl) {
@@ -317,6 +322,11 @@ public class PokerTable implements ITable {
     public int numberBets() {
         return _numberBets;
     }
+    
+    @Override
+    public int numberCallers() {
+        return _numberCallers;
+    }
 
     @Override
     public Round round() {
@@ -335,37 +345,32 @@ public class PokerTable implements ITable {
 
     @Override
     public void registerListenerForPlayer(String id, IPlayerActionListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void unregisterListenerForPlayer(String id, IPlayerActionListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (PlayerData pl : _players) {
+            if (pl.player().id().equals(id)) {
+                pl.listeners().add(listener);
+                break;
+            }
+        }
     }
 
     @Override
     public void registerPriorityListenerForPlayer(String id, IPlayerActionListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void unregisterPriorityListenerForPlayer(String id, IPlayerActionListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (PlayerData pl : _players) {
+            if (pl.player().id().equals(id)) {
+                pl.prioListeners().add(listener);
+                break;
+            }
+        }
     }
 
     @Override
     public void registerEventListener(IGameEventListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        _roundListeners.add(listener);
     }
 
     @Override
-    public void unregisterEventListener(IGameEventListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void registerListenAllPlayerEvents(IPlayerActionListener aThis) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void registerListenAllPlayerEvents(IPlayerActionListener listener) {
+        _allEventsListeners.add(listener);
     }
     
 }

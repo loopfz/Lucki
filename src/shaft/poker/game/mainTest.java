@@ -31,6 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import shaft.poker.agent.IHandEvaluator;
 import shaft.poker.agent.IHandRange;
+import shaft.poker.agent.handevaluators.enumeration.PreflopPrecomputedEval;
 import shaft.poker.agent.handevaluators.enumeration.FullEnumHandEval;
 import shaft.poker.agent.handevaluators.enumeration.bucket.BucketEnumHandEval;
 import shaft.poker.agent.handevaluators.enumeration.bucket.BucketEnum1CardHandEval;
@@ -52,6 +53,7 @@ public class mainTest {
             }
         }*/
         
+        /*
         List<Card> hole = new ArrayList<>(2);
         List<Card> board = new ArrayList<>(5);
         
@@ -62,6 +64,7 @@ public class mainTest {
         board.add(deck.selectDraw(Card.Rank.FOUR, Card.Suit.CLUBS));
         board.add(deck.selectDraw(Card.Rank.FIVE, Card.Suit.SPADES));
         board.add(deck.selectDraw(Card.Rank.JACK, Card.Suit.DIAMONDS));
+        */
 
        /* hole.add(deck.drawCard());
         hole.add(deck.drawCard());
@@ -84,7 +87,8 @@ public class mainTest {
         }
         System.out.println("------");
         */
-                
+             
+        /*
         IHandEvaluator eval = new BucketEnumHandEval();
         IHandEvaluator eval2 = new FullEnumHandEval();
         IHandEvaluator eval3 = new BucketEnum1CardHandEval();
@@ -95,6 +99,7 @@ public class mainTest {
         double test = freq.estimatedStrength(ITable.ActionType.BET, 0, ITable.Round.TURN);
         
         System.out.println("Estimated EHS from freq: " + test);
+        */
 
         /*for (int i = 0; i < 1000; i++) {
             eval3.compute(hole, board, range, 6);            

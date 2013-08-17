@@ -51,20 +51,15 @@ public interface ITable {
     public void runGame(int hands, int stackSize, int sBlind, int bBlind);
     
     public int numberBets();
+    public int numberCallers();
     public Round round();
     public int numberActivePlayers();
     
     public List<Card> board();
     
     public void registerListenerForPlayer(String id, IPlayerActionListener listener);
-    public void unregisterListenerForPlayer(String id, IPlayerActionListener listener);
-    
     public void registerPriorityListenerForPlayer(String id, IPlayerActionListener listener);
-    public void unregisterPriorityListenerForPlayer(String id, IPlayerActionListener listener);
-
-    public void registerListenAllPlayerEvents(IPlayerActionListener aThis);
-
+    public void registerListenAllPlayerEvents(IPlayerActionListener listener);
     public void registerEventListener(IGameEventListener listener);
-    public void unregisterEventListener(IGameEventListener listener);
 
 }
