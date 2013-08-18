@@ -60,7 +60,7 @@ public class PreflopHandGroups extends AHandEvaluator {
         Card c1 = holecards.get(0);
         Card c2 = holecards.get(1);
         
-        if (c1.rank().ordinal() < c2.rank().ordinal()) {
+        if (c1.rank().ordinal() > c2.rank().ordinal()) {
             Card tmp = c1;
             c1 = c2;
             c2 = tmp;
@@ -81,7 +81,7 @@ public class PreflopHandGroups extends AHandEvaluator {
         
         count += ((double) _groupCount[group - 1]) / 2.0;
         
-        _handStr = 1.0 - count / 169;
+        _handStr = 0.9 - count / 169.0;
         _handStr = Math.pow(_handStr, numPlayers - 1);
     }
 }

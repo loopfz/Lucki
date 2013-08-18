@@ -78,13 +78,13 @@ public class HumanPlayer implements IPlayer, IGameEventListener, IPlayerActionLi
 
     @Override
     public IAction action(ITable table, IPlayerData plData, IActionBuilder plContext) {
-        System.out.println("#####" + _id + " ACTS #####");
+        System.out.println("##### " + _id + " ACTS #####");
         //System.out.println("--------------------");
 
         //System.out.println("--------------------");
         System.out.print("Hand: ");
         for (Card c : _holeCards) {
-            System.out.print(c.toString() + " ");
+            System.out.print(" [" + c.toString() + "] ");
         }
         System.out.println();
         System.out.println("STACK: " + plData.stack());
@@ -111,7 +111,7 @@ public class HumanPlayer implements IPlayer, IGameEventListener, IPlayerActionLi
         System.out.println("%%% START OF BETTING ROUND: " + r.toString());
         System.out.print("Board: ");
         for (Card c : table.board()) {
-            System.out.print(c.toString() + " ");
+            System.out.print(" [" + c.toString() + "] ");
         }
         System.out.println();
     }

@@ -76,7 +76,7 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
         System.out.println("((( AGENT ACTION: " + id() + " )))");
         System.out.print("Hand: ");
         for (Card c : _holeCards) {
-            System.out.print(c.toString() + " ");
+            System.out.print(" [" + c.toString() + "] ");
         }
         System.out.println();
         
@@ -86,7 +86,7 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
         
         System.out.println("negPot: " + _eval.negPotential());
         
-        return _strat.action(table, plData, actionBuild, _eval);
+        return _strat.action(table, _holeCards, plData, actionBuild, _eval);
     }
 
     @Override

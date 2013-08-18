@@ -23,6 +23,8 @@
  */
 package shaft.poker.agent;
 
+import java.util.List;
+import shaft.poker.game.Card;
 import shaft.poker.game.IAction;
 import shaft.poker.game.ITable;
 import shaft.poker.game.table.IActionBuilder;
@@ -34,6 +36,6 @@ import shaft.poker.game.table.IPlayerData;
  */
 public interface IBettingStrategy {
     
-    public IAction action(ITable table, IPlayerData plData, IActionBuilder actionBuild, IHandEvaluator eval);
+    public IAction action(ITable table, List<Card> holeCards, IPlayerData plData, IActionBuilder actionBuild, IHandEvaluator eval);
     
 }

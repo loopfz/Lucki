@@ -107,6 +107,7 @@ public class PokerTable implements ITable {
             _currentRound = null;
             boolean sb = false;
             boolean bb = false;
+            boolean blinds = false;
             
             _board.clear();
             _deck.shuffle();
@@ -167,17 +168,17 @@ public class PokerTable implements ITable {
                     Iterator<PlayerData> activePlayers = _playersToAct.iterator();
                     PlayerData pl = null;
                     
-                    PLAYERS_LOOP: while (activePlayers.hasNext()) {
+                    while (activePlayers.hasNext()) {
                  
                         pl = activePlayers.next();
                         activePlayers.remove();
                         
-                        if (pl.allIn()) {
+                        if (pl.allIn() || _numberActivePlayers == 1) {
                             _playersActed.add(pl);
                             continue;
                         }
                         
-                        boolean blinds = false;
+                        blinds = false;
                         _actionBuild.setContext(this, pl);
                         IAction act;
                         if (!sb || !bb) {
@@ -223,9 +224,14 @@ public class PokerTable implements ITable {
                     if (raised) {
                         _playersToAct.addAll(_playersActed);
                         _playersActed.clear();
-                        _playersActed.add(pl);
                         _numberActivePlayers = _playersToAct.size() + 1;
                         _numberCallers = 0;
+                        if (blinds) {
+                            _playersToAct.add(pl);
+                        }
+                        else {
+                            _playersActed.add(pl);                            
+                        }
                     }
                 }
                 

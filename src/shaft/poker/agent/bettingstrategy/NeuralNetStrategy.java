@@ -23,11 +23,11 @@
  */
 package shaft.poker.agent.bettingstrategy;
 
+import java.util.List;
 import sane.Network;
 import sane.Sane_NN;
 import shaft.poker.agent.*;
-import shaft.poker.game.IAction;
-import shaft.poker.game.ITable;
+import shaft.poker.game.*;
 import shaft.poker.game.table.*;
 
 /**
@@ -45,7 +45,7 @@ public class NeuralNetStrategy implements IBettingStrategy, IGameEventListener {
     }
 
     @Override
-    public IAction action(ITable table, IPlayerData plData, IActionBuilder actionBuild, IHandEvaluator eval) {
+    public IAction action(ITable table, List<Card> holeCards, IPlayerData plData, IActionBuilder actionBuild, IHandEvaluator eval) {
         
         // Effective Hand Strength
         _net.input[0] = (float) eval.effectiveHandStrength();

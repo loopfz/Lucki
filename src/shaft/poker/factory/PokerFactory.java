@@ -103,7 +103,7 @@ public class PokerFactory {
     }
     
     public void addSimpleAgent() {
-        addAgent(new BucketEnum1CardHandEval(), new SimpleStrategy());
+        addAgent(new BucketEnum1CardHandEval(), new SimpleStrategy(_table));
     }
     
     public IPlayer addNeuralNetAgent() {
