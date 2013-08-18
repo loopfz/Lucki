@@ -1,0 +1,35 @@
+--------------------------------------------------------------------------------
+|                /$$                           /$$       /$$                   |
+|               | $$                          | $$      |__/                   |
+|               | $$       /$$   /$$  /$$$$$$$| $$   /$$ /$$                   |
+|               | $$      | $$  | $$ /$$_____/| $$  /$$/| $$                   |
+|               | $$      | $$  | $$| $$      | $$$$$$/ | $$                   |
+|               | $$      | $$  | $$| $$      | $$_  $$ | $$                   |
+|               | $$$$$$$$|  $$$$$$/|  $$$$$$$| $$ \  $$| $$                   |
+|               |________/ \______/  \_______/|__/  \__/|__/                   |
+|                                                                              |
+--------------------------------------------------------------------------------
+| Written by Thomas Schaffer <thomas.schaffer@epitech.eu> in Java.             |
+| Licensed under the MIT license.                                              |
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+| Description                                                                  |
+--------------------------------------------------------------------------------
+
+Lucki is a Poker AI agent that I developed for my MSc dissertation.
+
+It is based on some research by the Poker research group at the University
+of Alberta, notably their bots Poki, Loki, etc.
+The global architecture of the agent (hand weight tables for the opponents,
+and an hand evaluator enumerating potential future draws and applying
+those weights) is inspired by their published research and completely
+reimplemented from scratch.
+
+This project's contribution was to try and improve on the somewhat limited
+Betting Strategy component by experimenting with neural networks trained
+by a genetic algorithm.
+
+This contains the agent, along with a complete framework for poker play
+and AI agents so that it should be easy to implement other strategies
+while benefiting from the existing hand evaluation / profiling components.
