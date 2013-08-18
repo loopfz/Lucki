@@ -32,7 +32,7 @@ import shaft.poker.game.Card;
 import shaft.poker.game.Card.Rank;
 import shaft.poker.game.IHand;
 import shaft.poker.game.IHand.HandType;
-import shaft.poker.game.factory.ComponentFactory;
+import shaft.poker.factory.PokerFactory;
 
 /**
  *
@@ -203,12 +203,12 @@ public class PreflopPrecomputedEval extends AHandEvaluator {
                                     board.add(flop3);
                                     turnCand.remove(flop3);
                                     
-                                    IHand currentHand = ComponentFactory.buildHand(cand.cards(), board);
+                                    IHand currentHand = PokerFactory.buildHand(cand.cards(), board);
                                     
                                     List<EnumCandidate> oppCandidates = EnumCandidate.buildCandidates(cand.cards(), board);
                                     
                                     for (EnumCandidate oppCand : oppCandidates) {
-                                        IHand oppHand = ComponentFactory.buildHand(oppCand.cards(), board);
+                                        IHand oppHand = PokerFactory.buildHand(oppCand.cards(), board);
                                         int idx = currentHand.compareTo(oppHand) + 1;
 
                                         
@@ -231,8 +231,8 @@ public class PreflopPrecomputedEval extends AHandEvaluator {
                                                     for (Card river : riverCand) {
                                                             board.add(river);
                                                             
-                                                            IHand futureOwnHand = ComponentFactory.buildHand(cand.cards(), board);
-                                                            IHand futureOppHand = ComponentFactory.buildHand(oppCand.cards(), board);
+                                                            IHand futureOwnHand = PokerFactory.buildHand(cand.cards(), board);
+                                                            IHand futureOppHand = PokerFactory.buildHand(oppCand.cards(), board);
                                                             int futIdx = futureOwnHand.compareTo(futureOppHand) + 1;
                                                             
                                                             HP[idx][futIdx] += 1 * cand.weight() * oppCand.weight();
@@ -276,7 +276,153 @@ public class PreflopPrecomputedEval extends AHandEvaluator {
         prettyPrintTab(_negPot, "_negPot");
         
     }
+    
+    
+    public static void buildTab2() {
         
+        int count = 0;
+        
+        double[][][] _handStr = new double[2][Rank.values().length][Rank.values().length];
+        double[][][] _posPot = new double[2][Rank.values().length][Rank.values().length];
+        //double[][][] _negPot = new double[2][Rank.values().length][Rank.values().length];
+        
+        double[] HPTotal = new double[4];
+        
+        List<Card> holeCards = new ArrayList<>(2);
+        List<Card> board = new ArrayList<>(5);
+        List<Card> oppHole = new ArrayList<>(2);
+        
+        List<EnumCandidate> holeCandidates = EnumCandidate.buildCandidates(holeCards, board);
+        
+        for (EnumCandidate cand : holeCandidates) {
+
+            for (int i = 0; i < HPTotal.length; i++) {
+                HPTotal[i] = 0;
+            }
+            
+            List<Card> flop1Cand = new ArrayList<>(Card.values());
+            flop1Cand.removeAll(cand.cards());
+            //List<Card> flop2Cand = new ArrayList<>(flop1Cand);
+            //List<Card> flop3Cand = new ArrayList<>(flop2Cand);
+            //List<Card> turnCand = new ArrayList<>(flop3Cand);
+            
+            for (Card flop1 : flop1Cand) {
+                    board.add(flop1);
+                    //flop2Cand.remove(flop1);
+                    //flop3Cand.remove(flop1);
+                    //turnCand.remove(flop1);
+                    List<Card> flop2Cand = new ArrayList<>(flop1Cand);
+                    flop2Cand.remove(flop1);
+                    
+                    //List<Card> flop3Cand = new ArrayList<>(flop2Cand);
+                    
+                    for (Card flop2 : flop2Cand) {
+                            board.add(flop2);
+                            List<Card> flop3Cand = new ArrayList<>(flop2Cand);
+                            flop3Cand.remove(flop2);
+                            //flop3Cand.remove(flop2);
+                            //turnCand.remove(flop2);
+
+                            //List<Card> turnCand = new ArrayList<>(flop3Cand);
+                            
+                            for (Card flop3 : flop3Cand) {
+                                    board.add(flop3);
+                                    //turnCand.remove(flop3);
+                                    
+                                    //IHand currentHand = PokerFactory.buildHand(cand.cards(), board);
+                                    
+                                    List<EnumCandidate> oppCandidates = EnumCandidate.buildCandidates(cand.cards(), board);
+                                    
+                                    for (EnumCandidate oppCand : oppCandidates) {
+                                        //IHand oppHand = PokerFactory.buildHand(oppCand.cards(), board);
+                                        //int idx = currentHand.compareTo(oppHand) + 1;
+
+                                        
+                                        /*if (idx > 0 && (currentHand.type() == HandType.STRAIGHT || currentHand.type() == HandType.FLUSH
+                                                || currentHand.type() == HandType.STRAIGHT_FLUSH || currentHand.type() == HandType.ROYAL_FLUSH)) {
+                                            HPTotal[4] += 1 * cand.weight() * oppCand.weight();
+                                        }
+                                        else {*/
+                                                                                    
+                                            List<Card> turnCand = new ArrayList<>(flop3Cand);
+                                            turnCand.remove(flop3);
+                                            turnCand.removeAll(oppCand.cards());
+                                            List<Card> riverCand = new ArrayList<>(turnCand);
+                                        
+                                            for (Card turn : turnCand) {
+                                                    board.add(turn);
+                                                    riverCand.remove(turn);
+                                                    
+                                                    for (Card river : riverCand) {
+                                                            board.add(river);
+                                                            
+                                                            IHand ownHand = PokerFactory.buildHand(cand.cards(), board);
+                                                            IHand oppHand = PokerFactory.buildHand(oppCand.cards(), board);
+                                                            int idx = ownHand.compareTo(oppHand) + 1;
+                                                            
+                                                            if (idx == 2 && (ownHand.type() == HandType.STRAIGHT || ownHand.type() == HandType.FLUSH
+                                                                    || ownHand.type() == HandType.STRAIGHT_FLUSH || ownHand.type() == HandType.ROYAL_FLUSH)) {
+                                                                idx = 3;
+                                                                /*System.out.println("## DRAW SUCCESS: " + ownHand.type());
+                                                                for (Card c : cand.cards()) {
+                                                                    System.out.print(" " + c.toString());
+                                                                }
+                                                                System.out.println();
+                                                                for (Card c : board) {
+                                                                    System.out.print(" " + c.toString());
+                                                                }
+                                                                System.out.println();
+                                                                System.out.println("[WEIGHT] " + cand.weight());*/
+                                                            }
+                                                            
+                                                            HPTotal[idx] += 1 * cand.weight() * oppCand.weight();
+                                                            
+                                                            board.remove(river);
+                                                    }
+                                                    board.remove(turn);
+                                            }
+                                        //}
+                                        
+                                    }
+                                    board.remove(flop3);
+                            }
+                            board.remove(flop2);
+                    }
+                    board.remove(flop1);
+                
+            }
+            
+            double posPot = HPTotal[3] / (HPTotal[0] + HPTotal[1] + HPTotal[2] + HPTotal[3]);
+            double handStr = (HPTotal[2] + HPTotal[1] / 2) / (HPTotal[0] + HPTotal[1] + HPTotal[2]);
+            
+            int idx1 = cand.cards().get(0).suit() == cand.cards().get(1).suit() ? 1 : 0;
+            int idx2 = cand.cards().get(0).rank().ordinal();
+            int idx3 = cand.cards().get(1).rank().ordinal();
+            
+            _handStr[idx1][idx2][idx3] = handStr;
+            _posPot[idx1][idx2][idx3] = posPot;
+            _handStr[idx1][idx3][idx2] = handStr;
+            _posPot[idx1][idx3][idx2] = posPot;
+            
+            System.out.println(++count);
+            
+            System.out.println("[HAND] " + cand.cards().get(0).toString() + " & " + cand.cards().get(1).toString());
+            
+            System.out.println("[LOSE] " + HPTotal[0]);
+            System.out.println("[TIE] " + HPTotal[1]);
+            System.out.println("[WIN] " + HPTotal[2]);
+            System.out.println("[DRAWING] " + HPTotal[3]);
+            System.out.println();
+            System.out.println("PosPot: " + posPot);
+            System.out.println("Raw Str: " + handStr);
+            
+        }
+        
+        prettyPrintTab(_handStr, "_handStr");
+        prettyPrintTab(_posPot, "_posPot");
+        
+    }
+    
     private static void prettyPrintTab(double[][][] tab, String name) {
         System.out.println(name + " = {");
         for (int i = 0; i < tab.length; i++) {

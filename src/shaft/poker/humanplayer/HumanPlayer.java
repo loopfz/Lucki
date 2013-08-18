@@ -35,8 +35,9 @@ import shaft.poker.game.IAction;
 import shaft.poker.game.IPlayer;
 import shaft.poker.game.ITable;
 import shaft.poker.game.table.IPlayerActionListener;
-import shaft.poker.game.table.IPlayerContext;
+import shaft.poker.game.table.IActionBuilder;
 import shaft.poker.game.table.IGameEventListener;
+import shaft.poker.game.table.IPlayerData;
 
 /**
  *
@@ -76,7 +77,7 @@ public class HumanPlayer implements IPlayer, IGameEventListener, IPlayerActionLi
     }
 
     @Override
-    public IAction action(ITable table, IPlayerContext plContext) {
+    public IAction action(ITable table, IPlayerData plData, IActionBuilder plContext) {
         System.out.println("#####" + _id + " ACTS #####");
         //System.out.println("--------------------");
 
@@ -85,6 +86,10 @@ public class HumanPlayer implements IPlayer, IGameEventListener, IPlayerActionLi
         for (Card c : _holeCards) {
             System.out.print(c.toString() + " ");
         }
+        System.out.println();
+        System.out.println("STACK: " + plData.stack());
+        System.out.println("POT: " + table.potSize());
+        System.out.println("TO CALL: " + plData.betsToCall() + " bets [" + plData.amountToCall() + "]");
         System.out.println("Input selection:");
         System.out.println("[1] Fold");
         System.out.println("[2] Check/Call");
@@ -119,14 +124,18 @@ public class HumanPlayer implements IPlayer, IGameEventListener, IPlayerActionLi
     @Override
     public void newHand(ITable table) {
         System.out.println("********************* NEW HAND *********************");
+        System.out.println("DEALER: " + table.playerDealer());
+        System.out.println("SMALL BLIND: " + table.playerSmallBlind());
+        System.out.println("BIG BLIND: " + table.playerBigBlind());
+        _holeCards.clear();
     }
 
     @Override
-    public void gameAction(ITable table, String id, IPlayerContext plContext, ITable.ActionType type, int amount) {
-        System.out.print("Player [" + id + "] action: " + type.toString());
+    public void gameAction(ITable table, IPlayerData plData, ITable.ActionType type, int amount) {
+        System.out.print("Player [" + plData.id() + "] action: " + type.toString());
         if (amount > 0) {
             System.out.print(" [" + amount + "]");
-            if (plContext.stack() <= amount) {
+            if (plData.stack() <= amount) {
                 System.out.print(" (ALL IN)");
             }
         }
@@ -134,8 +143,8 @@ public class HumanPlayer implements IPlayer, IGameEventListener, IPlayerActionLi
     }
 
     @Override
-    public void leave(ITable table, String id) {
-        System.out.println("Player [" + id + "] left the table");
+    public void leave(ITable table, IPlayerData plData) {
+        System.out.println("Player [" + plData.id() + "] left the table");
     }
 
     @Override
@@ -145,6 +154,11 @@ public class HumanPlayer implements IPlayer, IGameEventListener, IPlayerActionLi
         System.out.println("Small blind: " + sBlind);
         System.out.println("Big blind: " + bBlind);
         System.out.println("Num players: " + numPlayers);
+    }
+
+    @Override
+    public void winHand(ITable table, IPlayerData data, int amount) {
+        System.out.println("[WIN] Player " + data.id() + " wins " + amount);
     }
     
 }

@@ -29,7 +29,7 @@ import shaft.poker.agent.IHandRange;
 import shaft.poker.agent.handevaluators.AHandEvaluator;
 import shaft.poker.game.Card;
 import shaft.poker.game.IHand;
-import shaft.poker.game.factory.ComponentFactory;
+import shaft.poker.factory.PokerFactory;
 
 /**
  *
@@ -43,7 +43,7 @@ public class FullEnumHandEval extends AEnumHandEvaluator {
         
         List<Card> boardCpy = new ArrayList(board);
         
-        IHand ownCurrentHand = ComponentFactory.buildHand(holecards, board);
+        IHand ownCurrentHand = PokerFactory.buildHand(holecards, board);
         
         List<Card> c1Cand = new ArrayList(Card.values());
         for (Card c : holecards) {
@@ -63,7 +63,7 @@ public class FullEnumHandEval extends AEnumHandEvaluator {
                 candCards.add(c1);
                 candCards.add(c2);
                 
-                IHand oppCurentHand = ComponentFactory.buildHand(candCards, board);
+                IHand oppCurentHand = PokerFactory.buildHand(candCards, board);
                 int curIdx = ownCurrentHand.compareTo(oppCurentHand) + 1;
                 
                 List<Card> turnCand;
@@ -89,8 +89,8 @@ public class FullEnumHandEval extends AEnumHandEvaluator {
                         boardCpy.add(turn);
                         boardCpy.add(river);
                         
-                        IHand ownFutureHand = ComponentFactory.buildHand(holecards, boardCpy);
-                        IHand oppFutureHand = ComponentFactory.buildHand(candCards, boardCpy);
+                        IHand ownFutureHand = PokerFactory.buildHand(holecards, boardCpy);
+                        IHand oppFutureHand = PokerFactory.buildHand(candCards, boardCpy);
                         
                         int futIdx = ownFutureHand.compareTo(oppFutureHand) + 1;
                         HP[curIdx][futIdx] += 1 * range.handWeight(candCards.get(0), candCards.get(1));

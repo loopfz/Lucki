@@ -29,8 +29,9 @@ import shaft.poker.game.Card;
 import shaft.poker.game.IAction;
 import shaft.poker.game.IPlayer;
 import shaft.poker.game.ITable;
-import shaft.poker.game.table.IPlayerContext;
+import shaft.poker.game.table.IActionBuilder;
 import shaft.poker.game.table.IGameEventListener;
+import shaft.poker.game.table.IPlayerData;
 
 /**
  *
@@ -69,10 +70,10 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
     }
 
     @Override
-    public IAction action(ITable table, IPlayerContext plContext) {
+    public IAction action(ITable table, IPlayerData plData, IActionBuilder actionBuild) {
         _eval.compute(_holeCards, table.board(), _compositeRange, table.numberActivePlayers());
         
-        return _strat.action(table, plContext, _eval.effectiveHandStrength(), _eval.negPotential());
+        return _strat.action(table, plData, actionBuild, _eval);
     }
 
     @Override
@@ -92,6 +93,11 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
 
     @Override
     public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
+        
+    }
+
+    @Override
+    public void winHand(ITable table, IPlayerData data, int amount) {
         
     }
     

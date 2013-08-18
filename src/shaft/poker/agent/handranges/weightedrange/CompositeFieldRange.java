@@ -23,15 +23,14 @@
  */
 package shaft.poker.agent.handranges.weightedrange;
 
+
+import shaft.poker.game.table.*;
 import java.util.ArrayList;
 import java.util.List;
 import shaft.poker.agent.IHandRange;
 import shaft.poker.agent.handranges.IPlayerRange;
-import shaft.poker.game.Card;
-import shaft.poker.game.ITable;
-import shaft.poker.game.ITable.ActionType;
-import shaft.poker.game.table.IPlayerActionListener;
-import shaft.poker.game.table.IPlayerContext;
+import shaft.poker.game.*;
+import shaft.poker.game.ITable.*;
 
 /**
  *
@@ -50,22 +49,23 @@ public class CompositeFieldRange implements IHandRange, IPlayerActionListener {
     
     public void addRange(IPlayerRange range) {
         _fieldRanges.add(range);
+        triggerReweight();
     }
 
     @Override
     public double handWeight(Card c1, Card c2) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return _wt.getWeight(c1, c2);
     }
 
     @Override
-    public void gameAction(ITable table, String id, IPlayerContext plContext, ActionType type, int amount) {
+    public void gameAction(ITable table, IPlayerData plData, ActionType type, int amount) {
         if (type != ActionType.CALL || amount > 0) {
             triggerReweight();
         }
     }
 
     @Override
-    public void leave(ITable table, String id) {
+    public void leave(ITable table, IPlayerData plData) {
         
     }
 

@@ -30,7 +30,7 @@ import shaft.poker.agent.IHandRange;
 import shaft.poker.agent.handevaluators.enumeration.AEnumHandEvaluator;
 import shaft.poker.game.Card;
 import shaft.poker.game.IHand;
-import shaft.poker.game.factory.ComponentFactory;
+import shaft.poker.factory.PokerFactory;
 
 /**
  *
@@ -45,7 +45,7 @@ public class BucketEnum1CardHandEval extends AEnumHandEvaluator {
         
         List<Card> boardCpy = new ArrayList(board);
         
-        IHand ownCurrentHand = ComponentFactory.buildHand(holecards, board);
+        IHand ownCurrentHand = PokerFactory.buildHand(holecards, board);
         
         List<Card> drawCandidates = new ArrayList<>(Card.values());
         drawCandidates.removeAll(boardCpy);
@@ -56,7 +56,7 @@ public class BucketEnum1CardHandEval extends AEnumHandEvaluator {
         for (EnumCandidate cand : holeCandidates) {
             //System.out.println(cand.toString());
             
-            IHand oppCurentHand = ComponentFactory.buildHand(cand.cards(), board);
+            IHand oppCurentHand = PokerFactory.buildHand(cand.cards(), board);
             int curIdx = ownCurrentHand.compareTo(oppCurentHand) + 1;
             //HPTotal[curIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
             
@@ -65,8 +65,8 @@ public class BucketEnum1CardHandEval extends AEnumHandEvaluator {
                 if (!cand.cards().contains(drawCand)) {
                     boardCpy.add(drawCand);
                     
-                    IHand ownFutureHand = ComponentFactory.buildHand(holecards, boardCpy);
-                    IHand oppFutureHand = ComponentFactory.buildHand(cand.cards(), boardCpy);
+                    IHand ownFutureHand = PokerFactory.buildHand(holecards, boardCpy);
+                    IHand oppFutureHand = PokerFactory.buildHand(cand.cards(), boardCpy);
                     
                     int futIdx = ownFutureHand.compareTo(oppFutureHand) + 1;
                     HP[curIdx][futIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));

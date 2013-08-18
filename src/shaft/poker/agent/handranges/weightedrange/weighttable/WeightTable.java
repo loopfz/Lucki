@@ -23,6 +23,7 @@
  */
 package shaft.poker.agent.handranges.weightedrange.weighttable;
 
+import java.util.ArrayList;
 import java.util.List;
 import shaft.poker.agent.handranges.weightedrange.IWeightTable;
 import shaft.poker.game.Card;
@@ -30,6 +31,7 @@ import shaft.poker.game.Card.*;
 import shaft.poker.game.table.IGameEventListener;
 import shaft.poker.game.ITable;
 import shaft.poker.game.ITable.*;
+import shaft.poker.game.table.IPlayerData;
 
 /**
  *
@@ -50,6 +52,8 @@ public class WeightTable implements IWeightTable, IGameEventListener {
         _table1 = new double[Rank.values().length][Suit.values().length][Rank.values().length][Suit.values().length];
         _table2 = new double[Rank.values().length][Suit.values().length][Rank.values().length][Suit.values().length];
 
+        _delayedChanges = new ArrayList<>(100);
+        
         table.registerEventListener(this);
     }
     
@@ -132,6 +136,11 @@ public class WeightTable implements IWeightTable, IGameEventListener {
 
     @Override
     public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
+        
+    }
+
+    @Override
+    public void winHand(ITable table, IPlayerData data, int amount) {
         
     }
     

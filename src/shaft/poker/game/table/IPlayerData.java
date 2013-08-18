@@ -23,24 +23,18 @@
  */
 package shaft.poker.game.table;
 
-import shaft.poker.game.IAction;
-
 /**
  *
  * @author Thomas Schaffer <thomas.schaffer@epitech.eu>
  */
-public interface IPlayerContext {
+public interface IPlayerData {
     
-    public void setContext(int leftToCall, int potSize, int bBlind, int plStack);
-    
-    public int leftToCall();
-    public double potOdds();
-    public int minRaise();
-    public int maxRaise();
-    
+    public int amountToCall();
+    public int betsToCall();
+    public double potOdds(int potSize);
+    public int moneyInPotForRound();
+    public int totalMoneyInPot();
     public int stack();
-    
-    IAction makeFold();
-    IAction makeCall();
-    IAction makeRaise(int amount);
+    public int position();
+    public String id();
 }

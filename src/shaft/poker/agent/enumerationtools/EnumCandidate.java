@@ -126,16 +126,18 @@ public class EnumCandidate {
         
         // Add any suit with an empty (preflop) board, to distinguish suited/unsuited hands
         if (board.isEmpty()) {
-            weakSuits.add(Card.Suit.CLUBS);
+            weakSuits.add(Card.Suit.HEARTS);
         }
         
         for (Card.Rank r : Card.Rank.values()) {
             cardsLeft[r.ordinal()] = 4;
         }
-        for (Card c : holeCards) {
-            if (!weakSuits.contains(c.suit())
-                    && !strongSuits.contains(c.suit())) {
-                cardsLeft[c.rank().ordinal()]--;
+        if (holeCards != null) {
+            for (Card c : holeCards) {
+                if (!weakSuits.contains(c.suit())
+                        && !strongSuits.contains(c.suit())) {
+                    cardsLeft[c.rank().ordinal()]--;
+                }
             }
         }
         for (Card c : board) {

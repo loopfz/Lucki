@@ -23,8 +23,9 @@
  */
 package shaft.poker.game;
 
+import shaft.poker.game.table.IPlayerData;
 import java.util.List;
-import shaft.poker.game.table.IPlayerContext;
+import shaft.poker.game.table.IActionBuilder;
 
 /**
  *
@@ -38,5 +39,5 @@ public interface IPlayer {
     
     public List<Card> holeCards();
     
-    public IAction action(ITable table, IPlayerContext plContext);
+    public IAction action(ITable table, IPlayerData plData, IActionBuilder plContext);
 }

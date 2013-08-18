@@ -33,8 +33,7 @@ import shaft.poker.game.Card.*;
 import shaft.poker.game.table.IPlayerActionListener;
 import shaft.poker.game.ITable;
 import shaft.poker.game.ITable.*;
-import shaft.poker.game.table.IPlayerContext;
-import shaft.poker.game.table.IGameEventListener;
+import shaft.poker.game.table.*;
 
 /**
  *
@@ -75,7 +74,7 @@ public class PlayerWTRange implements IPlayerRange, IPlayerActionListener, IGame
         for (EnumCandidate holeCandidate : holeCards) {
             _eval.compute(holeCandidate.cards(), board, _compositeRange, numPlayers);
             
-            if (board.size() < 5 && _eval.posPotential() >= potOdds) {
+            if (board.size() > 0 && board.size() < 5 && _eval.posPotential() >= potOdds) {
                 continue;
             }
             
@@ -124,10 +123,10 @@ public class PlayerWTRange implements IPlayerRange, IPlayerActionListener, IGame
     }
 
     @Override
-    public void gameAction(ITable table, String id, IPlayerContext plContext, ActionType type, int amount) {
+    public void gameAction(ITable table, IPlayerData plData, ActionType type, int amount) {
         if (type != ActionType.FOLD) {
             if (type != ActionType.CALL || amount > 0) {
-                triggerReweight(table, type, plContext.potOdds());                
+                triggerReweight(table, type, plData.potOdds(table.potSize()));                
             }
         }
         else {
@@ -136,7 +135,7 @@ public class PlayerWTRange implements IPlayerRange, IPlayerActionListener, IGame
     }
 
     @Override
-    public void leave(ITable table, String id) {
+    public void leave(ITable table, IPlayerData plData) {
         //table.unregisterListenerForPlayer(_playerId, this);
         _dead = true;
         _active = false;
@@ -168,6 +167,11 @@ public class PlayerWTRange implements IPlayerRange, IPlayerActionListener, IGame
     public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
         _active = true;
         _dead = false;
+    }
+
+    @Override
+    public void winHand(ITable table, IPlayerData data, int amount) {
+        
     }
 
 }

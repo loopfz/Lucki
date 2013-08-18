@@ -53,9 +53,20 @@ public interface ITable {
     public int numberBets();
     public int numberCallers();
     public Round round();
+    public int potSize();
+    
+    public int numberPlayers();
     public int numberActivePlayers();
+    public int numberPlayersToAct();
+    
+    public int smallBlind();
+    public int bigBlind();
     
     public List<Card> board();
+    
+    public String playerSmallBlind();
+    public String playerBigBlind();
+    public String playerDealer();
     
     public void registerListenerForPlayer(String id, IPlayerActionListener listener);
     public void registerPriorityListenerForPlayer(String id, IPlayerActionListener listener);

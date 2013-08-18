@@ -21,22 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package shaft.poker.game.table.playercontext;
+package shaft.poker.game.table.actionbuilder;
 
-import shaft.poker.game.IAction;
-import shaft.poker.game.table.IPlayerContext;
+import shaft.poker.game.ITable.*;
 
 /**
  *
  * @author Thomas Schaffer <thomas.schaffer@epitech.eu>
  */
-public class PotLimitRules extends APlayerContext {
+public class NoLimitRules extends AActionBuilder {
 
     @Override
     public int maxRaise() {
         if (_plStack < _toCall) {
             return 0;
         }
-        return Math.min(_plStack - _toCall, _potSize);
+        return _plStack - _toCall;
     }
 }

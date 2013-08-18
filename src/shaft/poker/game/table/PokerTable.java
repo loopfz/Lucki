@@ -33,7 +33,7 @@ import shaft.poker.game.IDeck;
 import shaft.poker.game.IHand;
 import shaft.poker.game.IPlayer;
 import shaft.poker.game.ITable;
-import shaft.poker.game.factory.ComponentFactory;
+import shaft.poker.factory.PokerFactory;
 
 /**
  *
@@ -50,7 +50,7 @@ public class PokerTable implements ITable {
     private int _amountCall;
     private int _pot;
     
-    private IPlayerContext _plContext;
+    private IActionBuilder _actionBuild;
     
     private int _sBlind;
     private int _bBlind;
@@ -69,24 +69,25 @@ public class PokerTable implements ITable {
     // Dimension: [BettingRound]
     private int[] _cardsToDraw = {0, 3, 1, 1};
     
-    public PokerTable(List<IPlayer> players, IPlayerContext plContext) {
-        _plContext = plContext;
+    public PokerTable(IActionBuilder actionBuild) {
+        _actionBuild = actionBuild;
         
-        _numberTotalPlayers = players.size();
+        _numberTotalPlayers = 0;
         _players = new LinkedList<>();
         _playersToAct = new LinkedList<>();
         _playersActed = new LinkedList<>();
         _deadPlayers = new LinkedList<>();
         
-        _deck = ComponentFactory.buildDeck();
+        _deck = PokerFactory.buildDeck();
         _board = new ArrayList<>(5);
         
         _roundListeners = new ArrayList<>(25);
         _allEventsListeners = new ArrayList<>(25);
-
-        for (IPlayer pl : players) {
-            _players.add(new PlayerData(pl, this));
-        }
+    }
+    
+    public void addPlayer(IPlayer pl) {
+        _players.add(new PlayerData(pl, this));
+        _numberTotalPlayers++;
     }
     
     @Override
@@ -104,10 +105,15 @@ public class PokerTable implements ITable {
             _pot = 0;
             _amountCall = _bBlind;
             _currentRound = null;
-            boolean skipBlinds = true;
+            boolean sb = false;
+            boolean bb = false;
             
             _board.clear();
             _deck.shuffle();
+            
+            for (IGameEventListener listener : _roundListeners) {
+                listener.newHand(this);
+            }
             
             _deck.burnCard();
             for (int i = 0; i < 2; i++) {
@@ -117,9 +123,21 @@ public class PokerTable implements ITable {
             }
             
             // Post blind bets
-            playerBet(_players.get(0), _sBlind);
-            playerBet(_players.get(1), _bBlind);
+            /*playerBet(_players.get(0), _sBlind, true);
+            playerBet(_players.get(1), _bBlind - _sBlind, true);
+*/
             
+            int pos = 1;
+            for (PlayerData pl : _players) {
+                pl.setPosition(pos++);
+            }
+            
+            _numberActivePlayers = _players.size();
+            _playersToAct.clear();
+            _playersActed.clear();
+            _playersToAct.addAll(_players);
+            _numberActivePlayers = _playersToAct.size();
+                
             while (_currentRound != Round.RIVER && _numberActivePlayers > 1) {
                 if (_currentRound == null) {
                     _currentRound = Round.PREFLOP;
@@ -127,11 +145,6 @@ public class PokerTable implements ITable {
                 else {
                     _currentRound = Round.values()[_currentRound.ordinal() + 1];
                 }
-                
-                _playersToAct.clear();
-                _playersActed.clear();
-                _playersToAct.addAll(_players);
-                _numberActivePlayers = _playersToAct.size();
                 
                 _numberCallers = 0;
                 _numberBets = 0;
@@ -151,56 +164,62 @@ public class PokerTable implements ITable {
                 while (_playersToAct.size() > 0) {
                     boolean raised = false;
                     
-                    int i = 0;
                     Iterator<PlayerData> activePlayers = _playersToAct.iterator();
                     PlayerData pl = null;
                     
-                    while (activePlayers.hasNext()) {
-                        i++;
-                        if (skipBlinds && i <= 2) {
-                            continue;
-                        }
-                        
+                    PLAYERS_LOOP: while (activePlayers.hasNext()) {
+                 
                         pl = activePlayers.next();
                         activePlayers.remove();
-
+                        
                         if (pl.allIn()) {
                             _playersActed.add(pl);
                             continue;
                         }
                         
-                        _plContext.setContext(pl.leftToCall(_amountCall), _pot, _bBlind, pl.stack());
-                        IAction act = pl.player().action(this, _plContext);
+                        boolean blinds = false;
+                        _actionBuild.setContext(this, pl);
+                        IAction act;
+                        if (!sb || !bb) {
+                            blinds = true;
+                            if (!sb) {
+                                act = _actionBuild.makeSBlind();
+                                sb = true;
+                            }
+                            else {
+                                act = _actionBuild.makeBBlind();
+                                bb = true;
+                            }
+                        }
+                        else {
+                            act = pl.player().action(this, pl, _actionBuild);   
+                        }
                         
                         if (act == null || act.type() == ActionType.FOLD) {
                             _numberActivePlayers--;
-                            broadcastGameAction(pl.player().id(), ActionType.FOLD, 0, pl.prioListeners());
-                            broadcastGameAction(pl.player().id(), ActionType.FOLD, 0, pl.listeners());
-                            broadcastGameAction(pl.player().id(), ActionType.FOLD, 0, _allEventsListeners);
+                            broadcastGameAction(pl, ActionType.FOLD, 0, pl.prioListeners());
+                            broadcastGameAction(pl, ActionType.FOLD, 0, pl.listeners());
+                            broadcastGameAction(pl, ActionType.FOLD, 0, _allEventsListeners);
                         }
                         else {
                             if (act.type() == ActionType.CALL) {
                                 _playersActed.add(pl);
-                                playerCall(pl);
+                                playerCall(pl, act.amount());
                             }
                             if (act.type() == ActionType.BET) {
-                                if (pl.leftToCall(_amountCall) > 0) {
-                                    playerCall(pl);
-                                }
-                                playerBet(pl, act.amount());
+                                playerBet(pl, act.amount(), blinds);
                                 raised = true;
                             }
-                            broadcastGameAction(pl.player().id(), act.type(), act.amount(), pl.prioListeners());
-                            broadcastGameAction(pl.player().id(), act.type(), act.amount(), pl.listeners());
-                            broadcastGameAction(pl.player().id(), act.type(), act.amount(), _allEventsListeners);
-                            playerUpdateMaxWinnings(pl, act.amount());
+                            broadcastGameAction(pl, act.type(), act.amount(), pl.prioListeners());
+                            broadcastGameAction(pl, act.type(), act.amount(), pl.listeners());
+                            broadcastGameAction(pl, act.type(), act.amount(), _allEventsListeners);
+                            //playerUpdateMaxWinnings(pl, act.amount());
                             if (raised) {
                                 break;
                             }
                          }
                         
                     }
-                    skipBlinds = false;
                     if (raised) {
                         _playersToAct.addAll(_playersActed);
                         _playersActed.clear();
@@ -210,7 +229,7 @@ public class PokerTable implements ITable {
                     }
                 }
                 
-                if (_currentRound == Round.RIVER) {
+                if (_currentRound == Round.RIVER || _playersActed.size() == 1) {
                     while (_pot > 0) {
                         
                         PlayerData winner = null;
@@ -225,7 +244,7 @@ public class PokerTable implements ITable {
                             
                             while (it.hasNext()) {
                                 PlayerData pl = it.next();
-                                IHand oHand = ComponentFactory.buildHand(pl.player().holeCards(), _board);
+                                IHand oHand = PokerFactory.buildHand(pl.player().holeCards(), _board);
                                 int cmp;
                                 
                                 if (winHand == null || (cmp = winHand.compareTo(oHand)) < 0) {
@@ -249,9 +268,17 @@ public class PokerTable implements ITable {
                         }
                         
                         int winnings = _pot / (_splitters.size() + 1);
-                        _pot -= winner.winPot(winnings);
+                        int didWin = winner.winPot(winnings);
+                        _pot -= didWin;
+                        for (IGameEventListener listener : _roundListeners) {
+                            listener.winHand(this, winner, didWin);
+                        }
                         for (PlayerData split : _splitters) {
-                            _pot -= split.winPot(winnings);
+                            didWin = split.winPot(winnings);
+                            _pot -= didWin;
+                            for (IGameEventListener listener : _roundListeners) {
+                                listener.winHand(this, winner, didWin);
+                            }
                         }
                     }
                 }
@@ -273,36 +300,50 @@ public class PokerTable implements ITable {
                 if (pl.stack() <= 0) {
                     plIt.remove();
                     for (IPlayerActionListener listener : pl.prioListeners()) {
-                        listener.leave(this, pl.player().id());
+                        listener.leave(this, pl);
                     }
                     for (IPlayerActionListener listener : pl.listeners()) {
-                        listener.leave(this, pl.player().id());
+                        listener.leave(this, pl);
                     }
                     _deadPlayers.add(pl);
                 }
             }
             
-            PlayerData dealer = _players.removeLast();
-            _players.addFirst(dealer);
+            if (_players.size() > 1) {
+                PlayerData dealer = _players.removeLast();
+                _players.addFirst(dealer);                
+            }
         }
     }
     
-    private void broadcastGameAction(String id, ActionType type, int amount, List<IPlayerActionListener> listeners) {
+    private void broadcastGameAction(IPlayerData plData, ActionType type, int amount, List<IPlayerActionListener> listeners) {
         for (IPlayerActionListener listener : listeners) {
-            listener.gameAction(this, id, _plContext, type, amount);
+            listener.gameAction(this, plData, type, amount);
         }
     }
 
-    private void playerBet(PlayerData pl, int amount) {
+    private void playerBet(PlayerData pl, int amount, boolean blind) {
+        if (pl.amountToCall() > 0) {
+            playerCall(pl, pl.amountToCall());
+        }
         _pot += pl.placeMoney(amount);
-        _numberBets++;
+        if (!blind) {
+            _numberBets++;            
+        }
         _amountCall += amount;
         _numberCallers = 0;
+        playerUpdateMaxWinnings(pl, amount);
+        for (PlayerData o : _players) {
+            if (pl != o) {
+                o.betAgainst(amount, blind);
+            }
+        }
     }
     
-    private void playerCall(PlayerData pl) {
-        _pot += pl.placeMoney(pl.leftToCall(_amountCall));
+    private void playerCall(PlayerData pl, int amount) {
+        _pot += pl.placeMoney(pl.amountToCall());
         _numberCallers++;
+        playerUpdateMaxWinnings(pl, amount);
     }
     
     private void playerUpdateMaxWinnings(PlayerData pl, int amount) {
@@ -332,15 +373,40 @@ public class PokerTable implements ITable {
     public Round round() {
         return _currentRound;
     }
+    
+    @Override
+    public int potSize() {
+        return _pot;
+    }
 
     @Override
     public int numberActivePlayers() {
         return _numberActivePlayers;
     }
+    
+    @Override
+    public int numberPlayersToAct() {
+        return _playersToAct.size();
+    }
+    
+    @Override
+    public int numberPlayers() {
+        return _players.size();
+    }
 
     @Override
     public List<Card> board() {
         return _board;
+    }
+    
+    @Override
+    public int smallBlind() {
+        return _sBlind;
+    }
+    
+    @Override
+    public int bigBlind() {
+        return _bBlind;
     }
 
     @Override
@@ -371,6 +437,35 @@ public class PokerTable implements ITable {
     @Override
     public void registerListenAllPlayerEvents(IPlayerActionListener listener) {
         _allEventsListeners.add(listener);
+    }
+
+    @Override
+    public String playerSmallBlind() {
+        if (_players.size() > 0) {
+            return _players.get(0).id();
+        }
+        return null;
+    }
+
+    @Override
+    public String playerBigBlind() {
+        if (_players.size() > 1) {
+            return _players.get(1).id();
+        }
+        return null;
+    }
+
+    @Override
+    public String playerDealer() {
+        if (_players.size() > 1) {
+            if (_players.size() > 2) {
+                return _players.getLast().id();
+            }
+            else {
+                return _players.getFirst().id();
+            }
+        }
+        return null;
     }
     
 }

@@ -23,6 +23,7 @@
  */
 package shaft.poker.agent.handevaluators.enumeration.bucket;
 
+import shaft.poker.factory.PokerFactory;
 import shaft.poker.agent.enumerationtools.EnumCandidate;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,6 @@ import shaft.poker.agent.handevaluators.enumeration.AEnumHandEvaluator;
 import shaft.poker.game.Card;
 import shaft.poker.game.Card.*;
 import shaft.poker.game.IHand;
-import shaft.poker.game.factory.*;
 
 /**
  *
@@ -46,13 +46,13 @@ public class BucketEnumHandEval extends AEnumHandEvaluator {
         
         List<Card> boardCpy = new ArrayList(board);
         
-        IHand ownCurrentHand = ComponentFactory.buildHand(holecards, board);
+        IHand ownCurrentHand = PokerFactory.buildHand(holecards, board);
         
         List<EnumCandidate> holeCandidates = EnumCandidate.buildCandidates(holecards, board);
                 
         for (EnumCandidate cand : holeCandidates) {
             
-            IHand oppCurentHand = ComponentFactory.buildHand(cand.cards(), board);
+            IHand oppCurentHand = PokerFactory.buildHand(cand.cards(), board);
             int curIdx = ownCurrentHand.compareTo(oppCurentHand) + 1;
             
             List<Card> turnCand;
@@ -78,8 +78,8 @@ public class BucketEnumHandEval extends AEnumHandEvaluator {
                     boardCpy.add(turn);
                     boardCpy.add(river);
                     
-                    IHand ownFutureHand = ComponentFactory.buildHand(holecards, boardCpy);
-                    IHand oppFutureHand = ComponentFactory.buildHand(cand.cards(), boardCpy);
+                    IHand ownFutureHand = PokerFactory.buildHand(holecards, boardCpy);
+                    IHand oppFutureHand = PokerFactory.buildHand(cand.cards(), boardCpy);
                     
                     int futIdx = ownFutureHand.compareTo(oppFutureHand) + 1;
                     HP[curIdx][futIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));

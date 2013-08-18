@@ -25,7 +25,8 @@ package shaft.poker.agent;
 
 import shaft.poker.game.IAction;
 import shaft.poker.game.ITable;
-import shaft.poker.game.table.IPlayerContext;
+import shaft.poker.game.table.IActionBuilder;
+import shaft.poker.game.table.IPlayerData;
 
 /**
  *
@@ -33,6 +34,6 @@ import shaft.poker.game.table.IPlayerContext;
  */
 public interface IBettingStrategy {
     
-    public IAction action(ITable table, IPlayerContext plContext, double ehs, double negPot);
+    public IAction action(ITable table, IPlayerData plData, IActionBuilder actionBuild, IHandEvaluator eval);
     
 }

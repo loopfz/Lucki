@@ -23,6 +23,7 @@
  */
 package shaft.poker.agent.handranges.weightedrange.frequencytable;
 
+import shaft.poker.game.table.IPlayerData;
 import shaft.poker.agent.handranges.weightedrange.IFrequencyTable;
 import shaft.poker.game.table.IPlayerActionListener;
 import shaft.poker.game.ITable;
@@ -104,12 +105,12 @@ public class PlayerSpecificFrequencyTable implements IFrequencyTable, IPlayerAct
     }
 
     @Override
-    public void gameAction(ITable table, String id, IPlayerContext plContext, ActionType type, int amount) {
+    public void gameAction(ITable table, IPlayerData plData, ActionType type, int amount) {
         doIncrease(table.numberBets(), table.round(), type);
     }
 
     @Override
-    public void leave(ITable table, String id) {
+    public void leave(ITable table, IPlayerData plData) {
         //table.unregisterPriorityListenerForPlayer(_playerId, this);
     }
 
@@ -130,6 +131,11 @@ public class PlayerSpecificFrequencyTable implements IFrequencyTable, IPlayerAct
 
     @Override
     public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
+        
+    }
+
+    @Override
+    public void winHand(ITable table, IPlayerData data, int amount) {
         
     }
     

@@ -21,54 +21,60 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package shaft.poker.game.table.playercontext;
+package shaft.poker.game.table.actionbuilder;
 
 import shaft.poker.game.IAction;
 import shaft.poker.game.ITable;
-import shaft.poker.game.table.IPlayerContext;
+import shaft.poker.game.ITable.ActionType;
+import shaft.poker.game.table.*;
 
 /**
  *
  * @author Thomas Schaffer <thomas.schaffer@epitech.eu>
  */
-public abstract class APlayerContext implements IPlayerContext {
+public abstract class AActionBuilder implements IActionBuilder {
             
     protected int _toCall;
+    protected int _sBlind;
     protected int _bBlind;
     protected int _potSize;
     protected int _plStack;
     
     @Override
-    public void setContext(int leftToCall, int potSize, int bBlind, int plStack) {
-        _toCall = leftToCall;
-        _potSize = potSize;
-        _bBlind = bBlind;
-        _plStack = plStack;
+    public void setContext(ITable table, IPlayerData plData) {
+        _toCall = plData.amountToCall();
+        _potSize = table.potSize();
+        _sBlind = table.smallBlind();
+        _bBlind = table.bigBlind();
+        _plStack = plData.stack();
     }
 
-    @Override
-    public int leftToCall() {
-        return _toCall;
-    }
-    
-    @Override
-    public int stack() {
-        return _plStack;
-    }
-    
-    @Override
-    public double potOdds() {
-        return ((double) _toCall) / ((double) _potSize + _toCall);
-    }
-    
     @Override
     public int minRaise() {
         return _bBlind;
     }
+    
+    @Override
+    public IAction makeSBlind() {
+        int amount = _sBlind;
+        if (amount > _plStack) {
+            amount = _plStack;
+        }
+        return new GameAction(ActionType.BET, amount);
+    }
+    
+    @Override
+    public IAction makeBBlind() {
+        int amount = _bBlind - _sBlind;
+        if (amount > _plStack) {
+            amount = _plStack;
+        }
+        return new GameAction(ActionType.BET, amount);
+    }
 
     @Override
     public IAction makeFold() {
-        return new GameAction(ITable.ActionType.FOLD, 0);
+        return new GameAction(ActionType.FOLD, 0);
     }
     
     @Override

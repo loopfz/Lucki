@@ -21,23 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package shaft.poker.game.table.playercontext;
+package shaft.poker.game.table.actionbuilder;
 
 import shaft.poker.game.IAction;
+import shaft.poker.game.ITable;
 import shaft.poker.game.ITable.*;
-import shaft.poker.game.table.IPlayerContext;
 
 /**
  *
  * @author Thomas Schaffer <thomas.schaffer@epitech.eu>
  */
-public class NoLimitRules extends APlayerContext {
+public class GameAction implements IAction {
+
+    private ActionType _type;
+    private int _amount;
+    
+    public GameAction(ActionType type, int amount) {
+        _type = type;
+        _amount = amount;
+    }
+    
+    @Override
+    public ActionType type() {
+        return _type;
+    }
 
     @Override
-    public int maxRaise() {
-        if (_plStack < _toCall) {
-            return 0;
-        }
-        return _plStack - _toCall;
+    public int amount() {
+        return _amount;
     }
+    
 }

@@ -32,7 +32,7 @@ import shaft.poker.game.ITable.*;
  */
 public interface IPlayerActionListener {
 
-    public void gameAction(ITable table, String id, IPlayerContext plContext, ActionType type, int amount);
+    public void gameAction(ITable table, IPlayerData plData, ActionType type, int amount);
     
-    public void leave(ITable table, String id);
+    public void leave(ITable table, IPlayerData plData);
 }

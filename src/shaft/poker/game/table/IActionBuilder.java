@@ -21,23 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package shaft.poker.game.factory;
+package shaft.poker.game.table;
 
-import java.util.List;
-import shaft.poker.game.*;
-import shaft.poker.game.components.*;
+import shaft.poker.game.IAction;
+import shaft.poker.game.ITable;
 
 /**
  *
  * @author Thomas Schaffer <thomas.schaffer@epitech.eu>
  */
-public class ComponentFactory {
+public interface IActionBuilder {
     
-    public static IDeck buildDeck() {
-        return new CardDeck();
-    }
+    public void setContext(ITable table, IPlayerData plData);
+    
+    public int minRaise();
+    public int maxRaise();
 
-    public static IHand buildHand(List<Card> holeCards, List<Card> board) {
-        return new Hand(holeCards, board);
-    }
+    IAction makeSBlind();
+    IAction makeBBlind();
+    
+    IAction makeFold();
+    IAction makeCall();
+    IAction makeRaise(int amount);
 }
