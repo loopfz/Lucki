@@ -1,0 +1,340 @@
+JavaSANE is based on David Moriarty's C-code SANE: Symbiotic, Adaptive
+Neuro-Evolution neural network simulator, Version 2.0, as allowed by
+the GNU General Public Software License.
+
+========================================================================
+
+Version 1.2, 8/22/00 Alex Lubberts
+
+- Fixed a bug in SANE_EA.java that caused some neurons to receive too high
+  fitness value
+- A few other minor bug fixes.
+
+Version 1.1, 1/15/99 Cynthia Matyszek
+- Implementation of Domain.java
+- Expansion and rearrangement of Config.java
+- Vastly improved ease-of-use for new domain implementation
+
+Version 1.0, 9/10/1998
+
+README and all code copyright (C) 1998 Cynthia Matuszek
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 as published
+by the Free Software Foundation. This program is distributed in the hope
+that it will be useful, but without any warranty; without even the
+implied warranty of merchantability or fitness for a particular purpose.
+See the GNU General Public License for more details.
+
+Files included
+==============
+this README
+
+Sane.java - the main body of JavaSANE; this is the file modified by someone
+            who is implementing a network using JavaSANE (currently).  This
+            is the only code file that must be tweaked to use JavaSANE.
+Config.java - contains all the configuration options for JavaSANE--the only
+              other file that must be dealt with by end-users.
+Domain.java (v1.1 and later) - domain implementation
+Sane_Seed.java - contains functions to seed a population with pre-existing
+                 domain knowledge from the file seed.txt.
+Sane_Util.java - functions for handling JavaSANE populations (creating,
+                 loading, etc.)
+Sane_EA.java - contains evolutionary algorithms, used by JavaSANE to evolve
+               networks
+Sane_NN.java - contains code for building and activating a population of
+               JavaSANE neurons.
+Network.java - structure definitions for networks
+Neuron.java - structure definitions for neurons
+Best_net_structure.java - the structure that contains the best network
+           found so far on any given run.  This is a clumsy hack leftover
+           from being C code, because what it used to be is a pointer to a
+           specific network.  Not got long to live.
+
+
+Here's the quickest way to get JavaSANE up and running in a new domain.
+=======================================================================
+- Change the values in NUM_INPUTS and NUM_OUTPUTS in Config.java to the
+appropriate number of inputs and outputs for your network.  You should
+also tweak the values for maximum number of connections, number of hidden
+neurons and population sizes, to make sure they're intelligent with respect
+to your domain.
+
+- Rewrite the function Evaluate_net in Domain.java, which takes a neural
+net as a parameter and returns its "fitness value."  The fitness value
+is a numerical value. Whether your network is trying to maximize or
+minimize this value is set in Config.java (BUG: in versions up to 1.2
+at least, javasane is actually hardcoded to always maximize fitness).
+The scale of the fitness value matters only with respect to other
+fitness values--all JavaSANE does is compare the fitness values of
+different networks.  (The definition for a network is in Network.java.)
+Any support functions, etc. for Evaluate_net should go into Domain.java
+as well.
+
+Once Evaluate_net is defined, you can run JavaSANE and it will try to
+find networks that optimize the value returned by your function.  It
+will take care of creating and evolving the network for you.
+
+
+More about how it works
+=======================
+Domain.Evaluate_net takes some network as an argument; it is supposed to
+poke some values into that network's inputs and run the network, producing
+outputs.  The network is 'run' by calling Sane_NN.Activate_net, which must
+be done explicitly from within Domain.Evaluate_net; this means there should
+be a line that says something like:
+
+    Sane_NN.Activate_net(net);
+
+after you store values to the inputs.  Domain.Evaluate_net decides how
+'fit' those outputs are and returns a float that represents the fitness
+of the output.  Bigger numbers represent better results.
+
+The network inputs are net.input[0] through net.input[i], where i+1 is the
+number of inputs.  Outputs are net.sigout[0] through net.sigout[i], where
+i+1 is the number of outputs.  So:
+
+1. Domain.Evaluate_net is called, passing in the network 'net'
+2. in this procedure, set some input values into net.input[0] through
+   net.input[i]
+3. Call Sane_NN.Activate_net(net);
+4. look at net.sigout[0] through net.sigout[i] (the outputs) and decide
+   how well the network did
+5. assign that performance a numerical value (higher is better)
+6. return that number
+
+Re-make JavaSANE so code changes take effect.  At this point you're
+ready to go.  You call sane from the command line and tell it how many
+generations to iterate, and give it a value to seed the random number
+generator (so you can repeat trials if needed).  You also need to give
+it a population file, but that file won't actually be used.  (If you
+want to use it, set RANDOM_POP to 0 in Config.java.) JavaSANE then
+tries lots of different networks, choosing better ones to breed based
+on the evaluations you return; these networks are saved as files with
+the names 000best.bin through 999best.bin.  The command line to do
+this:
+
+    java {programname} {popfile} {# generations} {seed #} > {errorfile} &
+
+(such as)
+
+    java Sane POPFILE 100 12345 > sane-errors &
+
+Followed by
+
+    java Sane x &
+
+which will choose the best network file that's been created.  It will
+write a value into analyze.out, which is the value Domain.Evaluate_net
+returns for the best network.  It will also write into report.txt a
+bunch of lines that list a specific network file, and the best return
+value the network had found so far when that file was evaluated; the
+progress of JavaSANE can be tracked this way.
+
+Then, replace the small mathematical function with your own inputs and
+evaluation code. That's all there is to it.  It might help to note that
+Sane_Seed.java isn't used at all unless you turn on the use of it, and
+most of the other files are called by Sane.java and not by you; for the
+most part, all you have to edit is Evaluate_net in Domain.java and the
+network configuration parameters in Config.java.
+
+(Domain.Evaluate_net starts out with a stub for a network that takes two
+inputs and returns their sum in the output.)
+
+
+The menuing interface (from Cheryl Martin, with thanks)
+=======================================================
+
+-------------------------------------------------------------------
+A menu is presented if no arguments are given to sane on the command
+line.  Because the menu gives you no way to evolve a network, it is
+most useful for analysing networks after evolution.
+-------------------------------------------------------------------
+
+First you will be prompted for a seed...
+
+ enter a seed: [enter an integer seed for the random number generators here]
+
+
+Then the menu will appear:
+---------- Menu ----------
+   1.  Evaluate subpopulation
+   2.  Create random population
+   3.  Load population file
+   4.  Save population to file
+   5.  Load sub-population
+   7.  Find champion
+   9.  Outut Network Vectors for PCA
+
+ Choice:   [enter menu number here]
+
+
+Note:  Any input other than a number corresponding to a menu
+       item will terminate the program.
+
+The effect of the menu choices are listed below:
+
+
+1  (Evaluate subpopulation)
+
+   Builds a network from the current subpopulation of neurons (you
+   would want to load a sub-population first), then evaluates the
+   current subpopulation of neurons.
+   Unless you put a print statement in your evaluate_net code (to the
+   screen or to a file), this doesn't report anything or store any
+   information.  However, this command will build the network, give
+   it input values, and activate it.
+
+
+2  (Create random population)
+
+   This creates an initial, random, starting population of neurons.
+
+
+3  (Load population file)
+
+   This loads an initial population of neurons from a population file.
+   See documentation on <popfile>.
+
+   You will be prompted to enter a file name...
+   Enter filename:
+   type the name of a previously stored population file, <popfile>
+   The program will report the diversity of the population it reads in.
+
+
+4  (Save population to file)
+
+   This saves the current neuron population to a file.
+   See documentation on <popfile>.
+
+   You will be prompted to enter a file name...
+   Enter filename:
+   type the name of the file you wish to save to population in, <popfile>
+
+
+5  (Load sub-population)
+
+   This loads a neuron sub-population (number of neurons in the hidden
+   layer) from a file into the first Config.NUM_HIDDEN spaces of the
+   neuron population.
+
+   You will be prompted to enter a file name...
+   Enter filename of subpop:
+   type the name of a file containing a neuron subpopulation.
+   Note: After evolution, neuron subpopulations for networks can
+       be found in the files named "[###]best.bin" after evolution.
+
+
+7  (Find champion)
+
+   Calls the find_champion() function.  Same as using "java Sane x"
+   from the command line, see above.
+
+
+9  (Output Network Vectors for PCA)
+
+   Outputs Network Vectors for Primary Component Analysis
+
+
+
+-------------------------------------------------------------------
+Here is a description of the files SANE uses and creates:
+--------------------------------------------------------------------
+
+report.txt -- A report of the performance of each of the best networks
+              found in each generation.  Written by find_champion().
+              Format:
+              ###   <performance of network>
+
+    Where ### corresponds the the network found in file:  ###best.bin
+       and the <performance of network> is reported as the average
+       return value of evaluate_net(), over 50 evaluation trials, of
+       the best network found so far (networks are processed in order
+       of increasing ###).
+
+    Note:  report.txt is appended every time find_champion() runs, so the
+           report for the most recent run is always at the bottom of
+           the file.  The top of the file may contain old data.
+
+
+
+###best.bin --  Stores the neuron subpopulation that makes up the best
+                network for generation number ###.  The
+                corresponding network can be retrieved by the
+                load_partial() and build_net() functions.
+
+                ### ranges from 000 to (<generations> - 1)
+                If <generations> is greater than 1000, then
+                     ### ranges from 000 to 999
+                These files are binary files, and relatively small, so
+                don't worry that 1000 of them might get created.
+
+
+look --  Stores the status of the neuron population every SAVE_CYCLE
+         generations.
+         Every SAVE_CYCLE generations, the status is saved
+         in the following format:
+            cycle: c  top 5: f1,f2,f3,f4,f5
+
+    Where c corresponds to the generation number at which the status is being
+        reported, and
+        f1-5 is the fitness of the top 5 neurons in the entire population
+             where fitness of an individual neuron is calculated
+             as the sum of the fitnesses of the best 5 networks it
+             participated in.
+
+    Note:  look is appended every time sane evolves a network, so the
+           status for the most recent run is always at the bottom of
+           the file.  The top of the file may contain old data.
+
+
+analyze.out -- Reports the fitness of the best network found by
+               find_champion().
+               Format:
+               <performance of best network>
+
+       The <performance of best network> is reported as the average
+       return value of evaluate_net(), over 50 evaluation trials, of
+       the best network found by find_champion().  Only one value is
+       written to analyze.out for every call to find_champion().  Look
+       at report.txt to determine which network resulted in this
+       performance.
+
+    Note:  analyze.out is appended every time find_champion() runs, so the
+           report for the most recent run is always at the bottom of
+           the file.  The top of the file may contain old data.
+
+
+<popfile> -- named by user, given as argument to SANE.... see command-
+     line arguments as described above.  This file is binary.
+     The neurons are stored in sorted order, the best neuron is first.
+
+r-names.txt
+r-vectors.txt  -- These are the output files for the primary component
+                  analysis, menu option #9.
+
+
+Bugs, Problems and Future Work
+==============================
+There's a bug in the way fitness is evaluated for some neurons that can
+cause some neurons to be assigned too high a fitness score.  This is
+rarely a problem but every so often it can cause cascading problems that
+cause one entire run to produce wildly inaccurate results.  Currently,
+the solution is to watch for those runs and discard them; the bug will
+be fixed in the next release version.
+
+The number of networks created per generation (NUM_TRIALS in Config.java)
+must be less than or equal to the number of networks kept track of per
+generation (TOP_NETS in Config.java), or JavaSANE will die badly.
+
+The next step in the development of JavaSANE (apart from fixing these
+problems) is to make Config.java a run-time config file rather than part
+of the code, so JavaSANE need not be recompiled every time a parameter
+is changed.  After that, two major goals are to make it multithreaded
+and to implement some sort of visualization tools to help track network
+progress.
+
+
+-----------
+Any questions or comments should be sent to helix@cs.utexas.edu and/or
+risto@cs.utexas.edu.
