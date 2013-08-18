@@ -123,7 +123,8 @@ public class PokerFactory {
         for (IPlayerRange range : _playerRanges) {
             compRange.addRange(range);
         }
-        IPlayerRange ownRange = new PlayerWTRange(player.id(), new WeightTable(_table), buildFreqTable(player.id()), new BucketEnum1CardHandEval(), compRange, _table);
+        IPlayerRange ownRange = new PlayerWTRange(player.id(), new WeightTable(_table), buildFreqTable(player.id()),
+                new CompoundHandEval(new PreflopHandGroups(), new BucketEnum1CardHandEval()), compRange, _table);
         for (CompositeFieldRange fieldRange : _fieldRanges) {
             fieldRange.addRange(ownRange);
         }

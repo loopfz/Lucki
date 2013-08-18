@@ -59,24 +59,32 @@ public class BucketEnum1CardHandEval extends AEnumHandEvaluator {
             IHand oppCurentHand = PokerFactory.buildHand(cand.cards(), board);
             int curIdx = ownCurrentHand.compareTo(oppCurentHand) + 1;
             //HPTotal[curIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
-            
-            for (Card drawCand : drawCandidates) {
-                
-                if (!cand.cards().contains(drawCand)) {
-                    boardCpy.add(drawCand);
+            if (board.size() == 5) {
+                HPTotal[curIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
+            }
+            else {
+                for (Card drawCand : drawCandidates) {
                     
-                    IHand ownFutureHand = PokerFactory.buildHand(holecards, boardCpy);
-                    IHand oppFutureHand = PokerFactory.buildHand(cand.cards(), boardCpy);
-                    
-                    int futIdx = ownFutureHand.compareTo(oppFutureHand) + 1;
-                    HP[curIdx][futIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
-                    HPTotal[curIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
-                    
-                    
-                    boardCpy.remove(boardCpy.size() - 1);
-                    //System.out.println("LOOP");
+                    if (!cand.cards().contains(drawCand)) {
+                        boardCpy.add(drawCand);
+                        
+                        IHand ownFutureHand = PokerFactory.buildHand(holecards, boardCpy);
+                        IHand oppFutureHand = PokerFactory.buildHand(cand.cards(), boardCpy);
+                        
+                        int futIdx = ownFutureHand.compareTo(oppFutureHand) + 1;
+                        //System.out.println("HandWeight: " + range.handWeight(cand.cards().get(0), cand.cards().get(1)));
+                        //System.out.println("Cand weight: " + cand.weight());
+                        
+                        HP[curIdx][futIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
+                        HPTotal[curIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
+                        
+                        
+                        boardCpy.remove(boardCpy.size() - 1);
+                        //System.out.println("LOOP");
+                    }
                 }
             }
+            
         }
         
         _numPl = numPlayers;

@@ -55,40 +55,46 @@ public class BucketEnumHandEval extends AEnumHandEvaluator {
             IHand oppCurentHand = PokerFactory.buildHand(cand.cards(), board);
             int curIdx = ownCurrentHand.compareTo(oppCurentHand) + 1;
             
-            List<Card> turnCand;
-            List<Card> riverCand = new ArrayList<>(Card.values());
-            riverCand.removeAll(boardCpy);
-            riverCand.removeAll(holecards);
-            riverCand.removeAll(cand.cards());
-            if (board.size() == 4) {
-                turnCand = new ArrayList<>(1);
-                turnCand.add(board.get(3));
-                if (boardCpy.size() == 4) {
-                    boardCpy.remove(3);                    
-                }
+            if (board.size() == 5) {
+                HPTotal[curIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
             }
             else {
-                turnCand = new ArrayList<>(riverCand);
-            }
-            
-            for (Card turn : turnCand) {
-                riverCand.remove(turn);
+                List<Card> turnCand;
+                List<Card> riverCand = new ArrayList<>(Card.values());
+                riverCand.removeAll(boardCpy);
+                riverCand.removeAll(holecards);
+                riverCand.removeAll(cand.cards());
+                if (board.size() == 4) {
+                    turnCand = new ArrayList<>(1);
+                    turnCand.add(board.get(3));
+                    if (boardCpy.size() == 4) {
+                        boardCpy.remove(3);
+                    }
+                }
+                else {
+                    turnCand = new ArrayList<>(riverCand);
+                }
                 
-                for (Card river : riverCand) {
-                    boardCpy.add(turn);
-                    boardCpy.add(river);
+                for (Card turn : turnCand) {
+                    riverCand.remove(turn);
                     
-                    IHand ownFutureHand = PokerFactory.buildHand(holecards, boardCpy);
-                    IHand oppFutureHand = PokerFactory.buildHand(cand.cards(), boardCpy);
-                    
-                    int futIdx = ownFutureHand.compareTo(oppFutureHand) + 1;
-                    HP[curIdx][futIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
-                    HPTotal[curIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
-                    
-                    boardCpy.remove(3);
-                    boardCpy.remove(3);
+                    for (Card river : riverCand) {
+                        boardCpy.add(turn);
+                        boardCpy.add(river);
+                        
+                        IHand ownFutureHand = PokerFactory.buildHand(holecards, boardCpy);
+                        IHand oppFutureHand = PokerFactory.buildHand(cand.cards(), boardCpy);
+                        
+                        int futIdx = ownFutureHand.compareTo(oppFutureHand) + 1;
+                        HP[curIdx][futIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
+                        HPTotal[curIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
+                        
+                        boardCpy.remove(3);
+                        boardCpy.remove(3);
+                    }
                 }
             }
+
         }
 
         _numPl = numPlayers;        

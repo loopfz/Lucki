@@ -26,6 +26,7 @@ package shaft.poker.agent.handevaluators;
 import java.util.List;
 import shaft.poker.agent.IHandRange;
 import shaft.poker.game.Card;
+import shaft.poker.game.Card.Rank;
 
 /**
  *
@@ -71,7 +72,7 @@ public class PreflopHandGroups extends AHandEvaluator {
             c2 = tmp;
         }
         
-        int group = _handGroups[c1.rank().ordinal()][c2.rank().ordinal()];
+        int group = _handGroups[Rank.values().length - c1.rank().ordinal() - 1][Rank.values().length - c2.rank().ordinal() - 1];
         double count = 0;
         
         for (int i = 0; i < group - 1; i++) {
@@ -81,6 +82,6 @@ public class PreflopHandGroups extends AHandEvaluator {
         count += ((double) _groupCount[group - 1]) / 2.0;
         
         _handStr = 1.0 - count / 169;
-        _handStr = Math.pow(_handStr, numPlayers);
+        _handStr = Math.pow(_handStr, numPlayers - 1);
     }
 }

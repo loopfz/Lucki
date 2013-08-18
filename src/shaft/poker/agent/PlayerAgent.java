@@ -73,6 +73,19 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
     public IAction action(ITable table, IPlayerData plData, IActionBuilder actionBuild) {
         _eval.compute(_holeCards, table.board(), _compositeRange, table.numberActivePlayers());
         
+        System.out.println("((( AGENT ACTION: " + id() + " )))");
+        System.out.print("Hand: ");
+        for (Card c : _holeCards) {
+            System.out.print(c.toString() + " ");
+        }
+        System.out.println();
+        
+        System.out.println("EHS: " + _eval.effectiveHandStrength());
+        System.out.println("RawStr: " + _eval.rawHandStrength());
+        System.out.println("PosPot: " + _eval.posPotential());
+        
+        System.out.println("negPot: " + _eval.negPotential());
+        
         return _strat.action(table, plData, actionBuild, _eval);
     }
 

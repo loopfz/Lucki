@@ -27,8 +27,8 @@ public static int TOP_NETS_BREED = 20;	/* how many of those are breeders;
 
 // some definitions for our neural networks
 //=====================================================================
-public static int NUM_INPUTS = 2;	/* # of inputs */
-public static int NUM_OUTPUTS = 1;	/* # of output units */
+public static int NUM_INPUTS = 10;	/* # of inputs */
+public static int NUM_OUTPUTS = 3;	/* # of output units */
 public static int MAX_CONNECTIONS = 400; /* max # connections/unit */
 
 // These were originally part of skeleton-main.c, but are really
