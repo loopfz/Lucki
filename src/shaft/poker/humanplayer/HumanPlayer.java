@@ -47,6 +47,7 @@ public class HumanPlayer implements IPlayer, IGameEventListener, IPlayerActionLi
     
     private String _id;
     private List<Card> _holeCards;
+    private int _stack;
     
     public HumanPlayer(ITable table) {
         System.out.println("Enter name: ");
@@ -159,6 +160,16 @@ public class HumanPlayer implements IPlayer, IGameEventListener, IPlayerActionLi
     @Override
     public void winHand(ITable table, IPlayerData data, int amount) {
         System.out.println("[WIN] Player " + data.id() + " wins " + amount);
+    }
+
+    @Override
+    public void setStack(int stack) {
+        _stack = stack;
+    }
+
+    @Override
+    public int stack() {
+        return _stack;
     }
     
 }

@@ -51,7 +51,7 @@ public static boolean LAMARCKIAN = false;	/* write learned info back
 						   to chromosome */
 public static int LL_LOWER_LEVEL = -10;	/* the performance drops or increases*/
 public static int LL_UPPER_LEVEL = 10;	/* at which reinforcement happens */
-public static boolean MAXIMIZE_R = false;	/* trying to max (true) or min (false) reward? */
+public static boolean MAXIMIZE_R = true;	/* trying to max (true) or min (false) reward? */
 public static int LOCAL_STEPS = 500;	/* defines the # of actions rewards
 					   should be evaluated over for
 					   local_learning. */

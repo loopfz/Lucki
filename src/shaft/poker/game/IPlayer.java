@@ -40,4 +40,8 @@ public interface IPlayer {
     public List<Card> holeCards();
     
     public IAction action(ITable table, IPlayerData plData, IActionBuilder plContext);
+    
+    public void setStack(int stack);
+    
+    public int stack();
 }

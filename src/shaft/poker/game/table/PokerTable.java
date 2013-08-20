@@ -41,6 +41,8 @@ import shaft.poker.factory.PokerFactory;
  */
 public class PokerTable implements ITable {
     
+    private static final int MAXBETS_ROUND = 4;
+    
     private int _numberHandsInGame;
     private int _numberActivePlayers;
     private int _numberTotalPlayers;
@@ -49,6 +51,8 @@ public class PokerTable implements ITable {
     private int _numberCallers;
     private int _amountCall;
     private int _pot;
+    
+    private int _cardsDrawn;
     
     private IActionBuilder _actionBuild;
     
@@ -96,6 +100,7 @@ public class PokerTable implements ITable {
         _bBlind = bBlind;
         _numberHandsInGame = 0;
         _players.addAll(_deadPlayers);
+        _deadPlayers.clear();
         for (IGameEventListener listener : _roundListeners) {
             listener.newGame(this, stackSize, _sBlind, _bBlind, _numberTotalPlayers);
         }
@@ -123,11 +128,6 @@ public class PokerTable implements ITable {
                 }
             }
             
-            // Post blind bets
-            /*playerBet(_players.get(0), _sBlind, true);
-            playerBet(_players.get(1), _bBlind - _sBlind, true);
-*/
-            
             int pos = 1;
             for (PlayerData pl : _players) {
                 pl.setPosition(pos++);
@@ -140,6 +140,7 @@ public class PokerTable implements ITable {
             _numberActivePlayers = _playersToAct.size();
                 
             while (_currentRound != Round.RIVER && _numberActivePlayers > 1) {
+                int cardsDrawn2 = _cardsDrawn;
                 if (_currentRound == null) {
                     _currentRound = Round.PREFLOP;
                 }
@@ -208,13 +209,18 @@ public class PokerTable implements ITable {
                                 playerCall(pl, act.amount());
                             }
                             if (act.type() == ActionType.BET) {
-                                playerBet(pl, act.amount(), blinds);
-                                raised = true;
+                                if (_numberBets < MAXBETS_ROUND) {
+                                    playerBet(pl, act.amount(), blinds);
+                                    raised = true;                                    
+                                }
+                                else {
+                                    _playersActed.add(pl);
+                                    playerCall(pl, act.amount());
+                                }
                             }
                             broadcastGameAction(pl, act.type(), act.amount(), pl.prioListeners());
                             broadcastGameAction(pl, act.type(), act.amount(), pl.listeners());
                             broadcastGameAction(pl, act.type(), act.amount(), _allEventsListeners);
-                            //playerUpdateMaxWinnings(pl, act.amount());
                             if (raised) {
                                 break;
                             }
@@ -271,6 +277,7 @@ public class PokerTable implements ITable {
                         else {
                             // Discarding odd chip left (odd split amount etc.)
                             _pot = 0;
+                            break;
                         }
                         
                         int winnings = _pot / (_splitters.size() + 1);
@@ -286,6 +293,8 @@ public class PokerTable implements ITable {
                                 listener.winHand(this, winner, didWin);
                             }
                         }
+                        _playersActed.remove(winner);
+                        _playersActed.removeAll(_splitters);
                     }
                 }
                 else {
@@ -297,6 +306,11 @@ public class PokerTable implements ITable {
                 for (IGameEventListener listener : _roundListeners) {
                     listener.roundEnd(this, _currentRound);
                 }
+            }
+                        
+            if (_players.size() > 1) {
+                PlayerData dealer = _players.removeLast();
+                _players.addFirst(dealer);
             }
             
             Iterator<PlayerData> plIt = _players.iterator();
@@ -314,11 +328,7 @@ public class PokerTable implements ITable {
                     _deadPlayers.add(pl);
                 }
             }
-            
-            if (_players.size() > 1) {
-                PlayerData dealer = _players.removeLast();
-                _players.addFirst(dealer);                
-            }
+
         }
     }
     

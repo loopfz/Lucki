@@ -8,6 +8,10 @@ package sane;
 /* Cyndy Matuszek, 1998 */
 
 import java.util.Random;
+import shaft.poker.agent.PlayerAgent;
+import shaft.poker.agent.bettingstrategy.NeuralNetStrategy;
+import shaft.poker.factory.PokerFactory;
+import shaft.poker.game.ITable;
 
 public class Domain {
 
@@ -18,7 +22,12 @@ public class Domain {
 //    public int evaluations = 0;
 //    public float global_best = -9999999.0F;	/* F for "float" (grr) */
 //    public float best_average = -9999999.0F;
-
+    private static PokerFactory _factory = new PokerFactory();
+    private static ITable _table;
+    private static NeuralNetStrategy _netStrat;
+    private static PlayerAgent _netAgent;
+    private static int n = 0;
+    private static int genCount = 0;
 
 /**********************************************************/
 /* Evaluate_net is the user_defined method that is called */
@@ -27,36 +36,34 @@ public class Domain {
 /**********************************************************/
 
   static float Evaluate_net(Network net) {
+      
+      if (_table == null) {
+          init_poker_env();
+      }
+      
+      _netStrat.setNetwork(net);
+      
+      _table.runGame(100, 1000, 5, 10);
+      
+      System.out.println("eval " + ++n + ": " + _netAgent.stack());
+      if (n == Config.NUM_TRIALS) {
+          System.out.println("Generation " + ++genCount + " done");
+          n = 0;
+      }
 
-/* This is a sample Evaluate_net function that tries to teach a network
-   to sum two random inputs and produce the sum in the output. */
-
-    float ReturnVal = 0.0F;
-    Random EvalNetRandom = new Random();
-
-    /* put a random value between 0 and .5 in the inputs */
-    net.input[0] = (EvalNetRandom.nextFloat()) / 2.0F;
-    net.input[1] = (EvalNetRandom.nextFloat()) / 2.0F;
-
-    /* activate the net */
-    Sane_NN.Activate_net(net);
-
-    /* after the net is activated, net.sigout contains the results */
-    /* of trying to sum the inputs.  So if we add the inputs, and  */
-    /* then subtract net.sigout, we'll get an error.  Minimizing   */
-    /* this error is our goal.                                     */
-    ReturnVal = 100 - Math.abs(((net.input[0]*100.0F) + (net.input[1]*100.0F)) - (net.sigout[0]*100.0F));
-
-/* For debugging, list out returnvals as we go */
-System.out.println("net.input[0]: " + net.input[0]);
-System.out.println("net.input[1]: " + net.input[1]);
-System.out.println("net.sigout[0]: " + net.sigout[0]);
-System.out.println("ReturnVal: " + ReturnVal);
-System.out.println("");
-
-    return(ReturnVal);
+      return (float) _netAgent.stack();
  
   }  /* end Evaluate_net */
+
+    private static void init_poker_env() {
+        _table = _factory.newLimitTable();
+        _factory.addSimpleAgent();
+        _factory.addSimpleAgent();
+        _factory.addSimpleAgent();
+        _factory.addSimpleAgent();
+        _netAgent = (PlayerAgent) _factory.addNeuralNetAgent();
+        _netStrat = (NeuralNetStrategy) _netAgent.bettingStrategy();
+    }
 
 /**********************************************************/
 

@@ -93,6 +93,7 @@ public class PlayerData implements IPlayerData, IGameEventListener {
         }
         addMoneyInPot(amount);
         _stack -= amount;
+        _pl.setStack(_stack);
         return amount;
     }
     
@@ -114,6 +115,7 @@ public class PlayerData implements IPlayerData, IGameEventListener {
             winnings = _maxWin;
         }
         _stack += winnings;
+        _pl.setStack(_stack);
         return winnings;
     }
     
@@ -184,6 +186,7 @@ public class PlayerData implements IPlayerData, IGameEventListener {
     @Override
     public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
         _stack = stackSize;
+        _pl.setStack(_stack);
     }
 
     @Override

@@ -56,11 +56,11 @@ public class SimpleStrategy implements IBettingStrategy, IGameEventListener {
 
     private IAction doBets(ITable table, IPlayerData plData, IActionBuilder actionBuild, int n) {
         if (table.numberBets() < n) {
-            System.out.println("Decision: VALUE BET");
+            //System.out.println("Decision: VALUE BET");
             return actionBuild.makeRaise(actionBuild.minRaise());
         }
         else if (plData.moneyInPotForRound() > 0 || plData.betsToCall() <= n) {
-            System.out.println("Decision: VALUE CALL");
+            //System.out.println("Decision: VALUE CALL");
             _preflopBetter = false;
             return actionBuild.makeCall();
         }
@@ -106,7 +106,7 @@ public class SimpleStrategy implements IBettingStrategy, IGameEventListener {
                     if (Math.random() <= BLINDSTEAL_RATE) {
                         // Try to steal blinds 30% of the time
                         _preflopBetter = true;
-                        System.out.println("Decision: BLIND STEAL");
+                        //System.out.println("Decision: BLIND STEAL");
                         return actionBuild.makeRaise(actionBuild.minRaise());
                     }
                 }
@@ -118,7 +118,7 @@ public class SimpleStrategy implements IBettingStrategy, IGameEventListener {
                     // Pocket pair or suited connectors
                     if (Math.random() <= PREFLOP_LATE_LIMPS_RATE) {
                         // Limp to try to flop a monster hand 60% of the time
-                        System.out.println("Decision: LATE CHEAP LIMP");
+                        //System.out.println("Decision: LATE CHEAP LIMP");
                         return actionBuild.makeCall();
                     }
                 }
@@ -129,7 +129,7 @@ public class SimpleStrategy implements IBettingStrategy, IGameEventListener {
                 if (_preflopBetter) {
                     // Strong preflop image, no action, try a continuation bet 30% of the time
                     if (Math.random() <= CONTINUATION_BET_RATE) {
-                        System.out.println("Decision: CONTINUATION BET");
+                        //System.out.println("Decision: CONTINUATION BET");
                         return actionBuild.makeRaise(actionBuild.minRaise());
                     }
                 }
@@ -139,7 +139,7 @@ public class SimpleStrategy implements IBettingStrategy, IGameEventListener {
                         // Decent pot size
                         if (Math.random() <= FLOP_POT_STEAL_RATE) {
                             // Try to steal the pot 30% of the time
-                            System.out.println("Decision: POT STEAL");
+                            //System.out.println("Decision: POT STEAL");
                             return actionBuild.makeRaise(actionBuild.minRaise());
                         }
                     }
@@ -149,13 +149,14 @@ public class SimpleStrategy implements IBettingStrategy, IGameEventListener {
         
         // Free check
         if (plData.amountToCall() == 0) {
-            System.out.println("Decision: FREE CHECK");
+            //System.out.println("Decision: FREE CHECK");
             return actionBuild.makeCall();
         }
         
         // Drawing hands, check pot odds
-        if (eval.posPotential() >= plData.potOdds(table.potSize())) {
-            System.out.println("Decision: DRAWING HAND / POT ODDS");
+        if ((table.round() != Round.RIVER && eval.posPotential() >= plData.potOdds(table.potSize()))
+                || (table.round() == Round.RIVER && eval.effectiveHandStrength() >= plData.potOdds(table.potSize()))) {
+            //System.out.println("Decision: DRAWING HAND / POT ODDS");
             return actionBuild.makeCall();
         }
         

@@ -33,6 +33,8 @@ import shaft.poker.agent.bettingstrategy.NeuralNetStrategy;
 import shaft.poker.agent.bettingstrategy.SimpleStrategy;
 import shaft.poker.agent.handevaluators.CompoundHandEval;
 import shaft.poker.agent.handevaluators.PreflopHandGroups;
+import shaft.poker.agent.handevaluators.enumeration.HeuristicPPotEval;
+import shaft.poker.agent.handevaluators.enumeration.RawStrEval;
 import shaft.poker.agent.handevaluators.enumeration.bucket.BucketEnum1CardHandEval;
 import shaft.poker.agent.handranges.IPlayerRange;
 import shaft.poker.agent.handranges.weightedrange.CompositeFieldRange;
@@ -103,11 +105,11 @@ public class PokerFactory {
     }
     
     public void addSimpleAgent() {
-        addAgent(new BucketEnum1CardHandEval(), new SimpleStrategy(_table));
+        addAgent(new HeuristicPPotEval(), new SimpleStrategy(_table));
     }
     
     public IPlayer addNeuralNetAgent() {
-        return addAgent(new BucketEnum1CardHandEval(), new NeuralNetStrategy(_table));
+        return addAgent(new HeuristicPPotEval(), new NeuralNetStrategy(_table));
     }
     
     private IPlayer addAgent(IHandEvaluator eval, IBettingStrategy strat) {
@@ -124,7 +126,7 @@ public class PokerFactory {
             compRange.addRange(range);
         }
         IPlayerRange ownRange = new PlayerWTRange(player.id(), new WeightTable(_table), buildFreqTable(player.id()),
-                new CompoundHandEval(new PreflopHandGroups(), new BucketEnum1CardHandEval()), compRange, _table);
+                new CompoundHandEval(new PreflopHandGroups(), new HeuristicPPotEval()), compRange, _table);
         for (CompositeFieldRange fieldRange : _fieldRanges) {
             fieldRange.addRange(ownRange);
         }

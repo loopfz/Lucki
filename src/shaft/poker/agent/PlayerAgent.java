@@ -25,13 +25,8 @@ package shaft.poker.agent;
 
 import java.util.ArrayList;
 import java.util.List;
-import shaft.poker.game.Card;
-import shaft.poker.game.IAction;
-import shaft.poker.game.IPlayer;
-import shaft.poker.game.ITable;
-import shaft.poker.game.table.IActionBuilder;
-import shaft.poker.game.table.IGameEventListener;
-import shaft.poker.game.table.IPlayerData;
+import shaft.poker.game.*;
+import shaft.poker.game.table.*;
 
 /**
  *
@@ -44,6 +39,7 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
     private IHandRange _compositeRange;
     private IBettingStrategy _strat;
     private List<Card> _holeCards;
+    private int _stack;
     
     public PlayerAgent(ITable table, String id, IHandEvaluator eval, IHandRange fieldRange, IBettingStrategy strat) {
         _playerId = id;
@@ -52,6 +48,10 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
         _strat = strat;
         _holeCards = new ArrayList<>(2);
         table.registerEventListener(this);
+    }
+    
+    public IBettingStrategy bettingStrategy() {
+        return _strat;
     }
 
     @Override
@@ -73,6 +73,7 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
     public IAction action(ITable table, IPlayerData plData, IActionBuilder actionBuild) {
         _eval.compute(_holeCards, table.board(), _compositeRange, table.numberActivePlayers());
         
+        /*
         System.out.println("((( AGENT ACTION: " + id() + " )))");
         System.out.print("Hand: ");
         for (Card c : _holeCards) {
@@ -85,6 +86,7 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
         System.out.println("PosPot: " + _eval.posPotential());
         
         System.out.println("negPot: " + _eval.negPotential());
+        */
         
         return _strat.action(table, _holeCards, plData, actionBuild, _eval);
     }
@@ -112,6 +114,16 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
     @Override
     public void winHand(ITable table, IPlayerData data, int amount) {
         
+    }
+
+    @Override
+    public void setStack(int stack) {
+        _stack = stack;
+    }
+
+    @Override
+    public int stack() {
+        return _stack;
     }
     
 }

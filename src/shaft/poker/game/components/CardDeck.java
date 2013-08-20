@@ -38,8 +38,10 @@ public class CardDeck implements IDeck {
     protected List<Card> _deck;
     private static final int SHUFFLE_COUNT = 100;
     private Random _rnd = new Random();
+    private int _drawCount;
     
     public CardDeck() {
+        //_deck = new ArrayList<>(Card.values().size());
         shuffle();
     }
     
@@ -47,7 +49,11 @@ public class CardDeck implements IDeck {
     public final void shuffle() {
         Card tmp;
         
-        _deck = new ArrayList(Card.values());
+        _drawCount = 0;
+        
+        //_deck.clear();
+        //_deck.addAll(Card.values());
+        _deck = new ArrayList<>(Card.values());
         
         for (int i = 0; i < SHUFFLE_COUNT; i++) {
             int c1 = _rnd.nextInt(_deck.size() - 1);
@@ -62,6 +68,12 @@ public class CardDeck implements IDeck {
     
         @Override
         public Card drawCard() {
+            if (_deck.size() == 0) {
+                System.out.println("empty deck, drawCount = " + _drawCount);
+            }
+            else {
+                _drawCount++;
+            }
             return _deck.remove(0);
         }
 
