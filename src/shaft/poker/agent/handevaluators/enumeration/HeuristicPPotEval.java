@@ -29,6 +29,7 @@ import shaft.poker.agent.enumerationtools.EnumCandidate;
 import shaft.poker.factory.PokerFactory;
 import shaft.poker.game.*;
 import shaft.poker.game.Card.*;
+import shaft.poker.game.IHand.HandType;
 
 /**
  *
@@ -41,10 +42,7 @@ public class HeuristicPPotEval extends AEnumHandEvaluator {
         initArrays();
         
         IHand ownCurrentHand = PokerFactory.buildHand(holecards, board);
-        
-        int[] suits = new int[Suit.values().length];
-        int[] ranks = new int[Rank.values().length];
-        
+
         List<EnumCandidate> holeCandidates = EnumCandidate.buildCandidates(holecards, board);
                 
         for (EnumCandidate cand : holeCandidates) {
@@ -54,47 +52,64 @@ public class HeuristicPPotEval extends AEnumHandEvaluator {
             HPTotal[curIdx] += cand.weight() * range.handWeight(cand.cards().get(0), cand.cards().get(1));
         }
         
-        int outs = 0;
-        int flushes = 0;
-        
-        for (Card c : holecards) {
-            suits[c.suit().ordinal()]++;
-            ranks[c.rank().ordinal()]++;
-        }
-        for (Card c : board) {
-            suits[c.suit().ordinal()]++;
-            ranks[c.rank().ordinal()]++;
-        }
-        
-        for (int i = 0; i < suits.length; i++) {
-            if (suits[i] == 4) {
-                flushes++;
-                outs += 9;
-            }
-        }
-        
-        for (int i = Rank.DEUCE.ordinal(); i < Rank.JACK.ordinal(); i++) {
-            if (ranks[i] >= 1
-                    && ranks[i + 1] >= 1
-                    && ranks[i + 2] >= 1
-                    && ranks[i + 3] >= 1) {
-                outs += 8 - flushes * 2;
-            }
-        }
-        
-        if (holecards.get(0).rank() == holecards.get(1).rank()) {
-            outs += 2;
-        }
-
-        
         _numPl = numPlayers;
         calculatePotentials();
-  
-        if (outs < 10) {
-            _posPot = ((double) outs) * 4.0 / 100.0;
-        }
-        else {
-            _posPot = (((double) outs) * 3.0 + 9.0) / 100.0;
+
+        if (board.size() < 5) {
+            
+            int[] suits = new int[Suit.values().length];
+            int[] ranks = new int[Rank.values().length];
+            
+            int outs = 0;
+            int flushes = 0;
+            
+            for (Card c : holecards) {
+                suits[c.suit().ordinal()]++;
+                ranks[c.rank().ordinal()]++;
+            }
+            for (Card c : board) {
+                suits[c.suit().ordinal()]++;
+                ranks[c.rank().ordinal()]++;
+            }
+            
+            for (int i = 0; i < suits.length; i++) {
+                if (suits[i] == 4) {
+                    flushes++;
+                    outs += 9;
+                }
+            }
+            
+            for (int i = Rank.DEUCE.ordinal(); i < Rank.JACK.ordinal(); i++) {
+                if (ranks[i] >= 1
+                        && ranks[i + 1] >= 1
+                        && ranks[i + 2] >= 1
+                        && ranks[i + 3] >= 1) {
+                    outs += 8 - flushes * 2;
+                }
+            }
+            
+            if (holecards.get(0).rank() == holecards.get(1).rank()) {
+                int onBoard = 0;
+                for (Card c : board) {
+                    if (c.rank() == holecards.get(0).rank()) {
+                        onBoard++;
+                    }
+                }
+                outs += 2 - onBoard;
+                if (ownCurrentHand.type() == HandType.THREE_OF_A_KIND) {
+                    outs += 8;
+                    if (board.size() == 4) {
+                        outs++;
+                    }
+                }
+            }
+            
+            if (outs < 10) {
+                _posPot = ((double) outs) * 4.0 / 100.0;
+            }
+            else {
+                _posPot = (((double) outs) * 3.0 + 9.0) / 100.0;
+            }
         }
         
         //printData();

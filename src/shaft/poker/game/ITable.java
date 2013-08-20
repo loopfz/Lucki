@@ -51,6 +51,7 @@ public interface ITable {
     public void runGame(int hands, int stackSize, int sBlind, int bBlind);
     
     public int numberBets();
+    public int maxBets();
     public int numberCallers();
     public Round round();
     public int potSize();

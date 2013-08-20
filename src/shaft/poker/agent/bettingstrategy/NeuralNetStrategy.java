@@ -48,17 +48,21 @@ public class NeuralNetStrategy implements IBettingStrategy, IGameEventListener {
     public IAction action(ITable table, List<Card> holeCards, IPlayerData plData, IActionBuilder actionBuild, IHandEvaluator eval) {
         
         // Effective Hand Strength
-        _net.input[0] = (float) eval.effectiveHandStrength();
+        _net.input[0] = (float) eval.rawHandStrength();
+        
+        // Positive potential, treated separately from RawStr to encourage the nets to pick up on things like potential vs pot odds
+        _net.input[1] = (float) eval.posPotential();
         
         // Negative Potential
-        _net.input[1] = (float) eval.negPotential();
+        _net.input[2] = (float) eval.negPotential();
         
         // Pot Odds
-        _net.input[2] = (float) plData.potOdds(table.potSize());
+        _net.input[3] = (float) plData.potOdds(table.potSize());
         
         // Position based on the dealer button (small blind = 1, big blind = 2, UTG = 3, ...)
         // Ratio by number active players to achieve a measure [0..1] with 1.0 being last position
-        _net.input[3] = ((float) plData.position()) / ((float) table.numberActivePlayers());
+        // _net.input[4] = ((float) plData.position()) / ((float) table.numberActivePlayers());
+        // Discarded, redundant (See proportion of active players which have already acted, better measure)
         
         // Proportion of the players which are still active
         _net.input[4] = ((float) table.numberActivePlayers()) / ((float) table.numberPlayers());
@@ -91,11 +95,11 @@ public class NeuralNetStrategy implements IBettingStrategy, IGameEventListener {
         
         Sane_NN.Activate_net(_net);
         
-        if (_net.winner == 2) {
+        if (_net.winner == 2 && table.numberBets() < table.maxBets()) {
             _mainBetter = true;
             return actionBuild.makeRaise(actionBuild.minRaise());
         }
-        else if (_net.winner == 1 || plData.amountToCall() == 0) {
+        else if (_net.winner >= 1 || plData.amountToCall() == 0) {
             _mainBetter = false;
             return actionBuild.makeCall();
         }

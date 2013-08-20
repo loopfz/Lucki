@@ -381,6 +381,11 @@ public class PokerTable implements ITable {
     }
     
     @Override
+    public int maxBets() {
+        return MAXBETS_ROUND;
+    }
+    
+    @Override
     public int numberCallers() {
         return _numberCallers;
     }
