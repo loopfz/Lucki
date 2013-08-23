@@ -352,7 +352,6 @@ public class PokerTable implements ITable {
         _amountCall += amount;
         _numberCallers = 0;
         playerUpdateMaxWinnings(pl, amount);
-        System.out.println("PLAYER BET: " + pl.id() + " [" + amount + "]");
         for (PlayerData o : _players) {
             if (pl != o) {
                 o.betAgainst(amount, blind);

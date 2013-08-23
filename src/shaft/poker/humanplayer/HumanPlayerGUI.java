@@ -63,6 +63,7 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
     
     private List<String> _players;
     
+    private IActionBuilder _actionBuild;
     private IAction _chosenAction;
 
     /**
@@ -211,6 +212,10 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
         potLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         logArea = new javax.swing.JTextArea();
+        jPanel3 = new javax.swing.JPanel();
+        foldBtn = new javax.swing.JButton();
+        callBtn = new javax.swing.JButton();
+        betBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -649,6 +654,51 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
         logArea.setRows(5);
         jScrollPane1.setViewportView(logArea);
 
+        foldBtn.setText("Fold");
+        foldBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                foldBtnActionPerformed(evt);
+            }
+        });
+
+        callBtn.setText("Check");
+        callBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                callBtnActionPerformed(evt);
+            }
+        });
+
+        betBtn.setText("Bet");
+        betBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                betBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(foldBtn)
+                .addGap(18, 18, 18)
+                .addComponent(callBtn)
+                .addGap(18, 18, 18)
+                .addComponent(betBtn)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(foldBtn)
+                    .addComponent(callBtn)
+                    .addComponent(betBtn))
+                .addContainerGap(39, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -659,7 +709,9 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 603, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -669,7 +721,8 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 75, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -679,6 +732,18 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void betBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_betBtnActionPerformed
+        _chosenAction = _actionBuild.makeRaise(_actionBuild.minRaise());
+    }//GEN-LAST:event_betBtnActionPerformed
+
+    private void callBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_callBtnActionPerformed
+        _chosenAction = _actionBuild.makeCall();
+    }//GEN-LAST:event_callBtnActionPerformed
+
+    private void foldBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_foldBtnActionPerformed
+        _chosenAction = _actionBuild.makeFold();
+    }//GEN-LAST:event_foldBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -750,15 +815,19 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
     private javax.swing.JPanel PanelP7;
     private javax.swing.JPanel PanelP8;
     private javax.swing.JLabel StackLabel;
+    private javax.swing.JButton betBtn;
     private javax.swing.JLabel boardC1;
     private javax.swing.JLabel boardC2;
     private javax.swing.JLabel boardC3;
     private javax.swing.JLabel boardC4;
     private javax.swing.JLabel boardC5;
+    private javax.swing.JButton callBtn;
+    private javax.swing.JButton foldBtn;
     private javax.swing.JLabel holeC1;
     private javax.swing.JLabel holeC2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
@@ -788,6 +857,8 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
             SwingUtilities.invokeAndWait(new Runnable() {
                 @Override
                 public void run() {
+                    _actionBuild = actionBuild;
+                    
                     String opt2;
                     if (plData.amountToCall() == 0) {
                         opt2 = "Check";
@@ -795,31 +866,41 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
                     else {
                         opt2 = "Call";
                     }
-                    Object[] options = {"Fold", opt2, "Bet" };
                     
-                    int act = JOptionPane.showOptionDialog(null, "Choose action :", "Player action", JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+                    callBtn.setText(opt2);
                     
-                    System.out.println("GOT ACTION: " + act);
-                    
-                    if (act == 0) {
-                        _chosenAction = actionBuild.makeFold();
-                    }
-                    else if (act == 1) {
-                        _chosenAction = actionBuild.makeCall();
-                    }
-                    else if (act == 2) {
-                        _chosenAction = actionBuild.makeRaise(actionBuild.minRaise());
-                    }
-                    else {
-                        System.exit(0);
-                    }
+                    foldBtn.setVisible(true);
+                    callBtn.setVisible(true);
+                    betBtn.setVisible(true);
                 }
             });
         } catch (Exception e) {
             
         }
-        return _chosenAction;
+
+        
+        while (_chosenAction == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                
+            }
+        }
+                
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                foldBtn.setVisible(false);
+                callBtn.setVisible(false);
+                betBtn.setVisible(false);
+            }
+        });
+        
+        IAction ret = _chosenAction;
+        _chosenAction = null;
+        _actionBuild = null;
+        
+        return ret;
     }
 
     @Override
@@ -952,7 +1033,6 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
 
     @Override
     public void gameAction(final ITable table, final IPlayerData plData, final ITable.ActionType type, final int amount) {
-        System.out.println("ACTION");
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
                 @Override
