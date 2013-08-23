@@ -149,12 +149,12 @@ public class HumanPlayer implements IPlayer, IGameEventListener, IPlayerActionLi
     }
 
     @Override
-    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
+    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, List<String> players) {
         System.out.println("### GAME START ###");
         System.out.println("Stack size: " + stackSize);
         System.out.println("Small blind: " + sBlind);
         System.out.println("Big blind: " + bBlind);
-        System.out.println("Num players: " + numPlayers);
+        System.out.println("Num players: " + players.size());
     }
 
     @Override

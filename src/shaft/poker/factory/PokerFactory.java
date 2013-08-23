@@ -48,6 +48,7 @@ import shaft.poker.game.components.*;
 import shaft.poker.game.table.PokerTable;
 import shaft.poker.game.table.actionbuilder.LimitRules;
 import shaft.poker.humanplayer.HumanPlayer;
+import shaft.poker.humanplayer.HumanPlayerGUI;
 
 /**
  *
@@ -102,6 +103,13 @@ public class PokerFactory {
     public void addHumanPlayer() {
         CompositeFieldRange compRange = new CompositeFieldRange(_table, new WeightTable(_table));
         addPlayer(new HumanPlayer(_table), compRange);
+    }
+       
+    public IPlayer addGUIHumanPlayer() {
+        CompositeFieldRange compRange = new CompositeFieldRange(_table, new WeightTable(_table));
+        HumanPlayerGUI gui = new HumanPlayerGUI(_table);
+        addPlayer(gui, compRange);
+        return gui;
     }
     
     public void addSimpleAgent() {

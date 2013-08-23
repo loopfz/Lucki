@@ -23,6 +23,7 @@
  */
 package shaft.poker.agent.handranges.weightedrange.frequencytable;
 
+import java.util.List;
 import shaft.poker.game.table.IPlayerData;
 import shaft.poker.agent.handranges.weightedrange.IFrequencyTable;
 import shaft.poker.game.table.IPlayerActionListener;
@@ -130,7 +131,7 @@ public class PlayerSpecificFrequencyTable implements IFrequencyTable, IPlayerAct
     }
 
     @Override
-    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
+    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, List<String> players) {
         
     }
 

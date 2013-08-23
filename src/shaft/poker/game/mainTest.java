@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import shaft.poker.agent.IHandEvaluator;
 import shaft.poker.agent.IHandRange;
 import shaft.poker.agent.handevaluators.enumeration.PreflopPrecomputedEval;
@@ -54,7 +55,8 @@ public class mainTest {
         factory.addSimpleAgent();
         factory.addSimpleAgent();
         factory.addSimpleAgent();
-        factory.addHumanPlayer();
+        //factory.addHumanPlayer();
+        JFrame gui = (JFrame) factory.addGUIHumanPlayer();
         
         table.runGame(1000, 2000, 5, 10);
     }

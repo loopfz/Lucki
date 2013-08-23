@@ -164,7 +164,7 @@ public class PlayerWTRange implements IPlayerRange, IPlayerActionListener, IGame
     }
 
     @Override
-    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
+    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, List<String> players) {
         _active = true;
         _dead = false;
     }

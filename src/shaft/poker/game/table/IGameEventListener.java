@@ -23,6 +23,7 @@
  */
 package shaft.poker.game.table;
 
+import java.util.List;
 import shaft.poker.game.ITable;
 import shaft.poker.game.ITable.Round;
 
@@ -37,7 +38,7 @@ public interface IGameEventListener {
     
     public void newHand(ITable table);
     
-    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers);
+    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, List<String> players);
     
     public void winHand(ITable table, IPlayerData data, int amount);
     

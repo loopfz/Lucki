@@ -46,6 +46,7 @@ public class PokerTable implements ITable {
     private int _numberHandsInGame;
     private int _numberActivePlayers;
     private int _numberTotalPlayers;
+    private List<String> _playerIds;
     private Round _currentRound;
     private int _numberBets;
     private int _numberCallers;
@@ -81,6 +82,7 @@ public class PokerTable implements ITable {
         _playersToAct = new LinkedList<>();
         _playersActed = new LinkedList<>();
         _deadPlayers = new LinkedList<>();
+        _playerIds = new ArrayList<>(10);
         
         _deck = PokerFactory.buildDeck();
         _board = new ArrayList<>(5);
@@ -92,6 +94,7 @@ public class PokerTable implements ITable {
     public void addPlayer(IPlayer pl) {
         _players.add(new PlayerData(pl, this));
         _numberTotalPlayers++;
+        _playerIds.add(pl.id());
     }
     
     @Override
@@ -102,7 +105,7 @@ public class PokerTable implements ITable {
         _players.addAll(_deadPlayers);
         _deadPlayers.clear();
         for (IGameEventListener listener : _roundListeners) {
-            listener.newGame(this, stackSize, _sBlind, _bBlind, _numberTotalPlayers);
+            listener.newGame(this, stackSize, _sBlind, _bBlind, _playerIds);
         }
         while (_players.size() > 1 && _numberHandsInGame < hands) {
             _numberHandsInGame++;
@@ -349,6 +352,7 @@ public class PokerTable implements ITable {
         _amountCall += amount;
         _numberCallers = 0;
         playerUpdateMaxWinnings(pl, amount);
+        System.out.println("PLAYER BET: " + pl.id() + " [" + amount + "]");
         for (PlayerData o : _players) {
             if (pl != o) {
                 o.betAgainst(amount, blind);

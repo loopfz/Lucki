@@ -184,7 +184,7 @@ public class PlayerData implements IPlayerData, IGameEventListener {
     }
 
     @Override
-    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
+    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, List<String> players) {
         _stack = stackSize;
         _pl.setStack(_stack);
     }
