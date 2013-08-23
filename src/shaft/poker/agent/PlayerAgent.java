@@ -73,7 +73,7 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
     public IAction action(ITable table, IPlayerData plData, IActionBuilder actionBuild) {
         _eval.compute(_holeCards, table.board(), _compositeRange, table.numberActivePlayers());
         
-        /*
+        
         System.out.println("((( AGENT ACTION: " + id() + " )))");
         System.out.print("Hand: ");
         for (Card c : _holeCards) {
@@ -86,7 +86,7 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
         System.out.println("PosPot: " + _eval.posPotential());
         
         System.out.println("negPot: " + _eval.negPotential());
-        */
+        
         
         return _strat.action(table, _holeCards, plData, actionBuild, _eval);
     }

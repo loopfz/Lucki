@@ -132,7 +132,16 @@ public class PlayerSpecificFrequencyTable implements IFrequencyTable, IPlayerAct
 
     @Override
     public void newGame(ITable table, int stackSize, int sBlind, int bBlind, List<String> players) {
-        
+        _freqs = new int[4][4][3][3];
+        for (int i = 0; i < _freqs.length; i++) {
+            for (int j = 0; j < _freqs[i].length; j++) {
+                for (int k = 0; k < _freqs[i][j].length; k++) {
+                    for (int l = 0; l < _freqs[i][j][k].length; l++) {
+                        _freqs[i][j][k][l] = 0;
+                    }
+                }
+            }
+        }
     }
 
     @Override

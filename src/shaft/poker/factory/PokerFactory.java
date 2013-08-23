@@ -113,17 +113,26 @@ public class PokerFactory {
     }
     
     public void addSimpleAgent() {
-        addAgent(new HeuristicPPotEval(), new SimpleStrategy(_table));
-    }
-    
-    public IPlayer addNeuralNetAgent() {
-        return addAgent(new HeuristicPPotEval(), new NeuralNetStrategy(_table));
-    }
-    
-    private IPlayer addAgent(IHandEvaluator eval, IBettingStrategy strat) {
         String id = _agentNames[_nameCount++];
+        addAgent(new HeuristicPPotEval(), new SimpleStrategy(_table), id);
+    }
+    
+    public IPlayer addBlankNeuralNetAgent() {
+        String id = _agentNames[_nameCount++];
+        return addAgent(new HeuristicPPotEval(), new NeuralNetStrategy(_table), id);
+    }
+    
+    public IPlayer addTrainedNeuralNetAgent(String name) {
+        PlayerAgent agent = addAgent(new HeuristicPPotEval(), new NeuralNetStrategy(_table), name);
+        NeuralNetStrategy strat = (NeuralNetStrategy) agent.bettingStrategy();
+        strat.networkFromFile(name);
+        return agent;
+    }
+    
+    private PlayerAgent addAgent(IHandEvaluator eval, IBettingStrategy strat, String id) {
+
         CompositeFieldRange compRange = new CompositeFieldRange(_table, new WeightTable(_table));
-        IPlayer agent = new PlayerAgent(_table, id, new CompoundHandEval(new PreflopHandGroups(), eval), compRange, strat);
+        PlayerAgent agent = new PlayerAgent(_table, id, new CompoundHandEval(new PreflopHandGroups(), eval), compRange, strat);
         addPlayer(agent, compRange);
         return agent;
     }

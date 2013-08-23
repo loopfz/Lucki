@@ -37,6 +37,7 @@ import shaft.poker.game.Card;
 import shaft.poker.game.IAction;
 import shaft.poker.game.IPlayer;
 import shaft.poker.game.ITable;
+import shaft.poker.game.ITable.ActionType;
 import shaft.poker.game.table.IActionBuilder;
 import shaft.poker.game.table.IGameEventListener;
 import shaft.poker.game.table.IPlayerActionListener;
@@ -851,7 +852,7 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
     }
 
     @Override
-    public IAction action(ITable table, final IPlayerData plData, final IActionBuilder actionBuild) {
+    public IAction action(final ITable table, final IPlayerData plData, final IActionBuilder actionBuild) {
         final JFrame f = this;
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
@@ -871,7 +872,9 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
                     
                     foldBtn.setVisible(true);
                     callBtn.setVisible(true);
-                    betBtn.setVisible(true);
+                    if (table.numberBets() < table.maxBets()) {
+                        betBtn.setVisible(true);                        
+                    }
                 }
             });
         } catch (Exception e) {
@@ -965,7 +968,8 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
                     plAmt.setVisible(false);
                 }
                 for (JLabel plSt : plSts) {
-                    plSt.setVisible(false);
+                    plSt.setText("");
+                    plSt.setVisible(true);
                 }
                 
                 plSts.get(getPlayer(table.playerSmallBlind())).setText("SB");
@@ -976,9 +980,6 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
                 else {
                     plSts.get(getPlayer(table.playerDealer())).setText("[D]");
                 }
-                plSts.get(getPlayer(table.playerSmallBlind())).setVisible(true);
-                plSts.get(getPlayer(table.playerBigBlind())).setVisible(true);
-                plSts.get(getPlayer(table.playerDealer())).setVisible(true);
 
                 holeC1.setVisible(false);
                 holeC2.setVisible(false);
@@ -1038,6 +1039,11 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
                 @Override
                 public void run() {
                     setPlayerData(plData);
+                    if (type == ActionType.FOLD) {
+                        int idx = getPlayer(plData.id());
+                        JLabel st = plSts.get(idx);
+                        st.setText(st.getText() + " [FOLD]");
+                    }
                     if (amount == 0) {
                         logArea.append("[" + plData.id() + "] ACTION: " + type.toString() + "\n");                    
                     }

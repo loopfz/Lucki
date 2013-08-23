@@ -113,9 +113,13 @@ public class NeuralNetStrategy implements IBettingStrategy, IGameEventListener {
         _net = net;
     }
     
-    public void networkFromFile(String file) {
+    public void networkFromFile(String name) {
         Neuron npop[] = new Neuron[Config.NUM_HIDDEN];
+        for (int i = 0; i < Config.NUM_HIDDEN; i++) {
+            npop[i] = new Neuron();
+        }
         Network net = new Network();
+        String file = name + ".bin";
         Sane_Util.Load_partial(npop, file);
         Sane_NN.Build_net(net, npop);
         setNetwork(net);

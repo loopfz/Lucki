@@ -5,7 +5,7 @@ package sane;
 
 public class Neuron {
 
-Neuron() {
+public Neuron() {
   gene = new float [Config.GENE_SIZE];
   in_conn = new int [Config.GENE_SIZE/2];
   out_conn = new int [Config.GENE_SIZE/2];

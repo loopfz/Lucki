@@ -55,9 +55,15 @@ public class mainTest {
         factory.addSimpleAgent();
         factory.addSimpleAgent();
         factory.addSimpleAgent();
+        factory.addSimpleAgent();
+        factory.addSimpleAgent();
+        factory.addSimpleAgent();
+        factory.addSimpleAgent();
+        //factory.addTrainedNeuralNetAgent("elvis");
+        //factory.addTrainedNeuralNetAgent("batman");
         //factory.addHumanPlayer();
         JFrame gui = (JFrame) factory.addGUIHumanPlayer();
         
-        table.runGame(1000, 2000, 5, 10);
+        table.runGame(1000, 1000, 5, 10);
     }
 }

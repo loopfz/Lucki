@@ -155,8 +155,12 @@ public class SimpleStrategy implements IBettingStrategy, IGameEventListener {
         
         // Drawing hands, check pot odds
         if ((table.round() != Round.RIVER && eval.posPotential() >= plData.potOdds(table.potSize()))
-                || (table.round() == Round.RIVER && eval.effectiveHandStrength() >= plData.potOdds(table.potSize()))) {
+                || eval.effectiveHandStrength() >= plData.potOdds(table.potSize())) {
             //System.out.println("Decision: DRAWING HAND / POT ODDS");
+            return actionBuild.makeCall();
+        }
+        
+        if (Math.random() <= ((double) plData.totalMoneyInPot()) / ((double) table.potSize())) {
             return actionBuild.makeCall();
         }
         

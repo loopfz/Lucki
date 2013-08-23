@@ -43,7 +43,7 @@ public class Domain {
       
       _netStrat.setNetwork(net);
       
-      _table.runGame(100, 1000, 5, 10);
+      _table.runGame(200, 1000, 5, 10);
       
       System.out.println("eval " + ++n + ": " + _netAgent.stack());
       if (n == Config.NUM_TRIALS) {
@@ -57,11 +57,15 @@ public class Domain {
 
     private static void init_poker_env() {
         _table = _factory.newLimitTable();
+        _factory.genericModel(false);
         _factory.addSimpleAgent();
         _factory.addSimpleAgent();
         _factory.addSimpleAgent();
         _factory.addSimpleAgent();
-        _netAgent = (PlayerAgent) _factory.addNeuralNetAgent();
+        _factory.addSimpleAgent();
+        _factory.addSimpleAgent();
+        _factory.addSimpleAgent();
+        _netAgent = (PlayerAgent) _factory.addBlankNeuralNetAgent();
         _netStrat = (NeuralNetStrategy) _netAgent.bettingStrategy();
     }
 
