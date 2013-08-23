@@ -324,14 +324,14 @@ public class Sane {
       fitness = 0;
 
       /* evaluate network */
-      for (i=0;i<50;++i)
+      for (i=0;i<10;++i)
         fitness += Domain.Evaluate_net(net);
       if (fitness > best)
         best = fitness;
       try {
         /* this is "try to open report.txt for appending" -- true=append */
         myOutputStream = new FileWriter("report.txt", true);
-        myOutputStream.write(j + "	" + best/50.0F + "\n");
+        myOutputStream.write(j + "	" + best/10.0F + "\n");
         myOutputStream.close();
         } catch (IOException e) {
 //        System.err.println(e);
@@ -341,14 +341,14 @@ public class Sane {
 
     try {
       myOutputStream = new FileWriter("analyze.out", true);
-      myOutputStream.write(j + "	" + best/50.0F + "\n");
+      myOutputStream.write(j + "	" + best/10.0F + "\n");
       myOutputStream.close();
       } catch (IOException e) {
       System.err.println(e);
       System.exit(0);
       } /* end catch */
 
-    System.out.println(j + "  " + best/50.0F + "\n");
+    System.out.println(j + "  " + best/10.0F + "\n");
  
   }  /* end Find_champion */
 

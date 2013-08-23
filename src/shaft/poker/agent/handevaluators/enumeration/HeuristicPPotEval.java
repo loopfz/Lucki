@@ -104,11 +104,16 @@ public class HeuristicPPotEval extends AEnumHandEvaluator {
                 }
             }
             
-            if (outs < 10) {
-                _posPot = ((double) outs) * 4.0 / 100.0;
+            if (board.size() == 4) {
+                _posPot = ((double) outs) * 2.0 / 100.0;
             }
             else {
-                _posPot = (((double) outs) * 3.0 + 9.0) / 100.0;
+                if (outs < 10) {
+                    _posPot = ((double) outs) * 4.0 / 100.0;
+                }
+                else {
+                    _posPot = (((double) outs) * 3.0 + 9.0) / 100.0;
+                }                
             }
         }
         
