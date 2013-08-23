@@ -24,8 +24,11 @@
 package shaft.poker.agent.bettingstrategy;
 
 import java.util.List;
+import sane.Config;
 import sane.Network;
+import sane.Neuron;
 import sane.Sane_NN;
+import sane.Sane_Util;
 import shaft.poker.agent.*;
 import shaft.poker.game.*;
 import shaft.poker.game.table.*;
@@ -109,6 +112,14 @@ public class NeuralNetStrategy implements IBettingStrategy, IGameEventListener {
     public void setNetwork(Network net) {
         _net = net;
     }
+    
+    public void networkFromFile(String file) {
+        Neuron npop[] = new Neuron[Config.NUM_HIDDEN];
+        Network net = new Network();
+        Sane_Util.Load_partial(npop, file);
+        Sane_NN.Build_net(net, npop);
+        setNetwork(net);
+    }
 
     @Override
     public void roundBegin(ITable table, ITable.Round r) {
@@ -129,7 +140,7 @@ public class NeuralNetStrategy implements IBettingStrategy, IGameEventListener {
     }
 
     @Override
-    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, int numPlayers) {
+    public void newGame(ITable table, int stackSize, int sBlind, int bBlind, List<String> players) {
         
     }
 

@@ -5,7 +5,7 @@ package sane;
 
 public class Network {
 
-Network() {
+public Network() {
   input = new float [Config.NUM_INPUTS];
   sigout = new float [Config.NUM_OUTPUTS];
   sum = new float [Config.NUM_OUTPUTS];
