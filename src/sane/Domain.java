@@ -43,15 +43,24 @@ public class Domain {
       
       _netStrat.setNetwork(net);
       
-      _table.runGame(200, 1000, 5, 10);
+      _table.runGame(100, 5000, 5, 10);
       
-      System.out.println("eval " + ++n + ": " + _netAgent.stack());
+      int win = _netAgent.winnings();
+      int stack = _netAgent.stack();
+      int profit = stack - 5000;
+      if (profit < 0) {
+          profit = 0;
+      }
+      
+      float fitness = ((float) stack) + ((float) profit) * 100;
+      
+      System.out.println("eval " + ++n + ": " + fitness + " [" + stack + "]");
       if (n == Config.NUM_TRIALS) {
           System.out.println("Generation " + ++genCount + " done");
           n = 0;
       }
 
-      return (float) _netAgent.stack();
+      return fitness;
  
   }  /* end Evaluate_net */
 

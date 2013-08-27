@@ -43,7 +43,7 @@ public class SimpleStrategy implements IBettingStrategy, IGameEventListener {
     private static final double VALUE_2BET = 0.85;
     private static final double VALUE_1BET = 0.50;
     
-    private static final double BLINDSTEAL_RATE = 0.3;
+    private static final double BLINDSTEAL_RATE = 0.35;
     private static final double PREFLOP_LATE_LIMPS_RATE = 0.6;
     private static final double CONTINUATION_BET_RATE = 0.3;
     private static final double FLOP_POT_STEAL_RATE = 0.3;
@@ -104,7 +104,7 @@ public class SimpleStrategy implements IBettingStrategy, IGameEventListener {
                 if (table.numberBets() == 0) {
                     // No action
                     if (Math.random() <= BLINDSTEAL_RATE) {
-                        // Try to steal blinds 30% of the time
+                        // Try to steal blinds 35% of the time
                         _preflopBetter = true;
                         //System.out.println("Decision: BLIND STEAL");
                         return actionBuild.makeRaise(actionBuild.minRaise());
@@ -160,7 +160,8 @@ public class SimpleStrategy implements IBettingStrategy, IGameEventListener {
             return actionBuild.makeCall();
         }
         
-        if (Math.random() <= ((double) plData.totalMoneyInPot()) / ((double) table.potSize())) {
+        if (Math.random() <= (((double) plData.totalMoneyInPot()) / ((double) table.potSize())) / 1.5) {
+            // Make the call now and then, depending on the amount already invested in the pot
             return actionBuild.makeCall();
         }
         

@@ -40,6 +40,8 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
     private IBettingStrategy _strat;
     private List<Card> _holeCards;
     private int _stack;
+    private int _preRoundStack;
+    private int _winnings;
     
     public PlayerAgent(ITable table, String id, IHandEvaluator eval, IHandRange fieldRange, IBettingStrategy strat) {
         _playerId = id;
@@ -74,7 +76,7 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
         _eval.compute(_holeCards, table.board(), _compositeRange, table.numberActivePlayers());
         
         
-        System.out.println("((( AGENT ACTION: " + id() + " )))");
+        /*System.out.println("((( AGENT ACTION: " + id() + " )))");
         System.out.print("Hand: ");
         for (Card c : _holeCards) {
             System.out.print(" [" + c.toString() + "] ");
@@ -86,19 +88,22 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
         System.out.println("PosPot: " + _eval.posPotential());
         
         System.out.println("negPot: " + _eval.negPotential());
-        
+        */
         
         return _strat.action(table, _holeCards, plData, actionBuild, _eval);
     }
 
     @Override
     public void roundBegin(ITable table, ITable.Round r) {
-        
+        _preRoundStack = _stack;
     }
 
     @Override
     public void roundEnd(ITable table, ITable.Round r) {
-        
+        int diff = _stack - _preRoundStack;
+        if (diff > 0) {
+            _winnings += diff;
+        }
     }
 
     @Override
@@ -126,4 +131,7 @@ public class PlayerAgent implements IPlayer, IGameEventListener {
         return _stack;
     }
     
+    public int winnings() {
+        return _winnings;
+    }
 }
