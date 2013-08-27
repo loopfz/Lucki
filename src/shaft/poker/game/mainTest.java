@@ -57,10 +57,10 @@ public class mainTest {
         factory.addSimpleAgent();
         factory.addSimpleAgent();
         factory.addSimpleAgent();
-        factory.addSimpleAgent();
-        factory.addSimpleAgent();
-        //factory.addTrainedNeuralNetAgent("elvis");
-        //factory.addTrainedNeuralNetAgent("batman");
+        //factory.addSimpleAgent();
+        //factory.addSimpleAgent();
+        factory.addTrainedNeuralNetAgent("1st");
+        factory.addTrainedNeuralNetAgent("2nd");
         //factory.addHumanPlayer();
         JFrame gui = (JFrame) factory.addGUIHumanPlayer();
         
