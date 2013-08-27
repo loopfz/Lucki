@@ -23,30 +23,14 @@
  */
 package shaft.poker.game;
 
-import java.awt.Component;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
-import shaft.poker.agent.IHandEvaluator;
-import shaft.poker.agent.IHandRange;
-import shaft.poker.agent.handevaluators.enumeration.PreflopPrecomputedEval;
-import shaft.poker.agent.handevaluators.enumeration.FullEnumHandEval;
-import shaft.poker.agent.handevaluators.enumeration.bucket.BucketEnumHandEval;
-import shaft.poker.agent.handevaluators.enumeration.bucket.BucketEnum1CardHandEval;
-import shaft.poker.agent.handranges.UniformRange;
-import shaft.poker.agent.handranges.weightedrange.IFrequencyTable;
-import shaft.poker.agent.handranges.weightedrange.frequencytable.GenericFrequencyTable;
-import shaft.poker.game.components.DebugDeck;
 import shaft.poker.factory.PokerFactory;
 
 /**
  *
  * @author Thomas Schaffer <thomas.schaffer@epitech.eu>
  */
-public class mainTest {
+public class Lucki {
     public static void main(String[] args) {
        
         PokerFactory factory = new PokerFactory();
@@ -57,10 +41,8 @@ public class mainTest {
         factory.addSimpleAgent();
         factory.addSimpleAgent();
         factory.addSimpleAgent();
-        //factory.addSimpleAgent();
-        //factory.addSimpleAgent();
-        factory.addTrainedNeuralNetAgent("1st");
-        factory.addTrainedNeuralNetAgent("2nd");
+        factory.addTrainedNeuralNetAgent("NN_1st");
+        factory.addTrainedNeuralNetAgent("NN_2nd");
         //factory.addHumanPlayer();
         JFrame gui = (JFrame) factory.addGUIHumanPlayer();
         

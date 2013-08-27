@@ -55,8 +55,8 @@ public class Domain {
       float fitness = ((float) stack) + ((float) profit) * 100;
       
       System.out.println("eval " + ++n + ": " + fitness + " [" + stack + "]");
-      if (n == 10) {
-          System.out.println("Indiv " + ++genCount + " done");
+      if (n == Config.NUM_TRIALS) {
+          System.out.println("Generation " + ++genCount + " done");
           n = 0;
       }
 
