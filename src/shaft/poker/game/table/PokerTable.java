@@ -312,8 +312,8 @@ public class PokerTable implements ITable {
             }
                         
             if (_players.size() > 1) {
-                PlayerData dealer = _players.removeLast();
-                _players.addFirst(dealer);
+                PlayerData dealer = _players.removeFirst();
+                _players.addLast(dealer);
             }
             
             Iterator<PlayerData> plIt = _players.iterator();

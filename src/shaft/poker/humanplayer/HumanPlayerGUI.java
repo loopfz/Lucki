@@ -23,11 +23,8 @@
  */
 package shaft.poker.humanplayer;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -131,6 +128,7 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
             public void run() {
                 setVisible(true);
                 setResizable(false);
+                setTitle("Lucki Poker: " + _id);
             } 
         });
     }
@@ -147,7 +145,7 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
     
     private void askId() {
         while (_id == null) {
-            String id = (String) JOptionPane.showInputDialog("Input id");
+            String id = (String) JOptionPane.showInputDialog("Name?");
             if (id != null && id.length() >= 3) {
                 _id = id;
             }
@@ -746,40 +744,6 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
         _chosenAction = _actionBuild.makeFold();
     }//GEN-LAST:event_foldBtnActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(HumanPlayerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(HumanPlayerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(HumanPlayerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(HumanPlayerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                //new TestGUI().setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel IdLabel;
     private javax.swing.JLabel P1Amt;
@@ -1074,7 +1038,7 @@ public class HumanPlayerGUI extends javax.swing.JFrame implements IPlayer, IGame
             @Override
             public void run() {
                 int idx = getPlayer(plData.id());
-                plIds.get(idx).setVisible(false);
+                //plIds.get(idx).setVisible(false);
                 plAmts.get(idx).setVisible(false);
                 plSts.get(idx).setVisible(false);
                 logArea.append("[" + plData.id() + "] left the table\n");
